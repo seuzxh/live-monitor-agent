@@ -1,0 +1,16 @@
+# ===== 运行时产物（state/心跳/推送/快照/日志/浏览器 profile，严禁入库）=====
+runtime/
+
+# ===== captcha_solver 独立 venv（spec NFR-3 例外，venv 内含绝对路径不可搬迁）=====
+scripts/monitor/.venv/
+
+# ===== Trae 技能本地配置（含敏感信息：手机号、Webhook Key 等）=====
+.trae/skills/hexun-live-login/memory.md
+.trae/skills/live-monitor/memory.md
+
+# ===== Python =====
+__pycache__/
+*.pyc
+
+# ===== 沙箱临时目录 =====
+tmp/
