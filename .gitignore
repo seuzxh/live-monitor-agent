@@ -22,3 +22,7 @@ docs/*.visual-check.*
 
 # ===== mkdocs 构建产物 =====
 site/
+
+# ===== 运行产物（根级兜底，防再次入库）=====
+browser-profile/
+.playwright-mcp/
