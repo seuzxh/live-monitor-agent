@@ -1,0 +1,1675 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="无人值守直播盯盘智能体——和讯直播自动登录、盘中轮询、LLM 分类整理、飞书推送">
+      
+      
+      
+      
+        <link rel="prev" href="..">
+      
+      
+        <link rel="next" href="../%E6%9E%B6%E6%9E%84%E5%AE%9A%E4%BD%8D%E4%B8%8E%E4%B8%9A%E7%95%8C%E5%AF%B9%E6%A0%87/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
+    
+    
+      
+        <title>直播监控方案 - 直播智能体文档</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href=".." title="直播智能体文档" class="md-header__button md-logo" aria-label="直播智能体文档" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            直播智能体文档
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              直播监控方案
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="indigo"  aria-label="切换深色"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换深色" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="indigo"  aria-label="切换浅色"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换浅色" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  首页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  直播监控方案
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../%E6%9E%B6%E6%9E%84%E5%AE%9A%E4%BD%8D%E4%B8%8E%E4%B8%9A%E7%95%8C%E5%AF%B9%E6%A0%87/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  架构定位与业界对标
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../%E8%84%9A%E6%9C%AC%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  脚本功能说明
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../trae-cli%E4%BD%BF%E7%94%A8%E7%A4%BA%E4%BE%8B/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  trae-cli 使用示例
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../prompt%E6%A2%B3%E7%90%86/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Prompt 梳理
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../ops/deploy/" class="md-tabs__link">
+          
+  
+  
+  运维
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="直播智能体文档" class="md-nav__button md-logo" aria-label="直播智能体文档" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    直播智能体文档
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    首页
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    直播监控方案
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    直播监控方案
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        一、系统架构
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="一、系统架构">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 数据流总览
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 五类组件的具体位置与作用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 一次推送的完整数据流（以一条干货消息为例）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.4 设计原则一句话
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        二、盘中监控
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="二、盘中监控">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        轮询机制
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#skill-60s" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        时段节奏（SKILL 约定，当前实现为固定 60s，待细化）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        自愈机制
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        三、信息归纳
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="三、信息归纳">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        分类体系（7 类）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        推送铁律
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prompt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        编辑任务实现（prompt 分类机制）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        当日持久化（三份档案）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        四、推送链路
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        五、登录与会话
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        六、调度与运维
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2026-11-09" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        七、已知问题与教训（2026-11-09 实盘首日）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        八、演进方向
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E6%9E%B6%E6%9E%84%E5%AE%9A%E4%BD%8D%E4%B8%8E%E4%B8%9A%E7%95%8C%E5%AF%B9%E6%A0%87/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    架构定位与业界对标
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E8%84%9A%E6%9C%AC%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    脚本功能说明
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../trae-cli%E4%BD%BF%E7%94%A8%E7%A4%BA%E4%BE%8B/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    trae-cli 使用示例
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prompt%E6%A2%B3%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prompt 梳理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    运维
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    运维
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ops/deploy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    部署指南
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ops/login-recovery-sop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    登录恢复 SOP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        一、系统架构
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="一、系统架构">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 数据流总览
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 五类组件的具体位置与作用
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 一次推送的完整数据流（以一条干货消息为例）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.4 设计原则一句话
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        二、盘中监控
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="二、盘中监控">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        轮询机制
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#skill-60s" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        时段节奏（SKILL 约定，当前实现为固定 60s，待细化）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        自愈机制
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        三、信息归纳
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="三、信息归纳">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        分类体系（7 类）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        推送铁律
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prompt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        编辑任务实现（prompt 分类机制）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        当日持久化（三份档案）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        四、推送链路
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        五、登录与会话
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        六、调度与运维
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2026-11-09" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        七、已知问题与教训（2026-11-09 实盘首日）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        八、演进方向
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="_1">直播监控方案<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p>对象：和讯财道「复盘哥专栏 VIP直播室」（房间 11605）的无人值守盯盘与推送。
+2026-11-09 实盘首日验证后成文；运维命令见根目录 <code>Makefile</code>，部署细节见 <code>docs/ops/deploy.md</code>。</p>
+</blockquote>
+<h2 id="_2">一、系统架构<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h3 id="11">1.1 数据流总览<a class="headerlink" href="#11" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p>交互式架构图（可缩放/聚焦/主题切换）：<a href="../%E7%9B%B4%E6%92%AD%E7%9B%91%E6%8E%A7%E6%9E%B6%E6%9E%84.html">直播监控架构.html</a>（由 <a href="../architecture.json">architecture.json</a> 经 archify 生成，含主链路/采集登录/记忆配置三个聚焦视图）。</p>
+</blockquote>
+<pre class="mermaid"><code>flowchart LR
+    A[crontab 交易日调度&lt;br&gt;08:45/08:50/15:20] --&gt; B[preflight 预检&lt;br&gt;六项检查]
+    B --&gt;|全过| C[monitor_poll 轮询进程&lt;br&gt;60秒/轮 Xvfb有头]
+    C --&gt; D[Playwright 持久化浏览器&lt;br&gt;browser-profile 登录态]
+    D --&gt;|老师新消息增量| E{LLM 编辑任务&lt;br&gt;traecli exec 单次}
+    E --&gt;|达标| F[send_webhook.py&lt;br&gt;飞书卡片]
+    E --&gt;|碎片| G[跳过]
+    E --&gt;|两次失败| H[记日志·留待补推]
+    F --&gt; I[飞书群 + 推送档案落盘]</code></pre>
+<h3 id="12">1.2 五类组件的具体位置与作用<a class="headerlink" href="#12" title="Permanent link">&para;</a></h3>
+<p><strong>① 脚本层（确定性执行，零智能）</strong>——<code>scripts/monitor/</code>（分组见 <code>docs/脚本功能说明.md</code>）：</p>
+<table>
+<thead>
+<tr>
+<th>脚本</th>
+<th>架构位置</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>core/monitor_poll.py</code></td>
+<td><strong>主循环/调度中枢</strong></td>
+<td>60s 轮询页面、增量识别（游标+哈希双去重）、组装 context、触发 LLM 任务（失败重试）、心跳与游标落盘、浏览器自愈重建</td>
+</tr>
+<tr>
+<td><code>preflight.sh</code></td>
+<td>启动闸门</td>
+<td>六项预检，不过不启动</td>
+</tr>
+<tr>
+<td><code>force_cleanup.sh</code></td>
+<td>收盘回收</td>
+<td>15:20 杀残留进程</td>
+</tr>
+<tr>
+<td><code>.trae/skills/live-monitor/scripts/send_webhook.py</code></td>
+<td>推送出口 + 档案写入口</td>
+<td>卡片格式化、发送、<strong>成功后自动落盘 pushes 档案</strong></td>
+</tr>
+<tr>
+<td><code>login/*</code>（6 个）</td>
+<td>登录恢复工具箱</td>
+<td>滑块识别 / 续期验证 / 验证码回传 / profile 打包 / noVNC 应急</td>
+</tr>
+</tbody>
+</table>
+<p>脚本层的原则：<strong>所有需要"可靠"的事情都在这层</strong>（重试、去重、自愈、落盘），不依赖 LLM 的自觉。</p>
+<p><strong>② LLM 层（智能判断，零状态）</strong>——traecli exec 单次编辑任务：</p>
+<ul>
+<li>架构位置：<strong>无状态的判断函数</strong>——输入 context，输出动作（推送/跳过），进程结束即消失；</li>
+<li>承担全部"需要理解"的事情：七类分类、碎片识别、话题合并、去废话、格式化；</li>
+<li>刻意设计：每任务全新 <code>--session-id</code>，<strong>不使用任何跨任务会话记忆</strong>（常驻会话实测不可靠）；同一个判断给两个独立任务结果一致（分类定义在 prompt 里写死）。</li>
+</ul>
+<p><strong>③ context（LLM 任务的输入组装）</strong>——每次编辑任务的完整输入就三样：</p>
+<table>
+<thead>
+<tr>
+<th>组成</th>
+<th>来源</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>编辑指令</td>
+<td><code>EDITOR_PROMPT</code>（monitor_poll 内嵌）</td>
+<td>七类定义全文 + 任务流程 + 输出协议 <code>{pushed, skipped}</code></td>
+</tr>
+<tr>
+<td>当批消息</td>
+<td><code>tmp/pending_msgs.json</code></td>
+<td>本轮新捕获的老师消息 JSON（时间 + 原文）</td>
+</tr>
+<tr>
+<td>参考指引</td>
+<td>prompt 中指向 <code>.trae/skills/live-monitor/memory.md</code></td>
+<td>agent 可自行读分类体系原文与格式规范</td>
+</tr>
+</tbody>
+</table>
+<p><strong>不进 context 的</strong>：历史消息（不需要——增量设计）、历史会话（没有——全新 session）、凭据（PAT 在进程环境变量，不进 prompt）、webhook 地址（agent 只调脚本，不接触地址）。</p>
+<p><strong>④ 本地持久化（系统的全部记忆）</strong>——<code>runtime/</code>：</p>
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>作用</th>
+<th>谁写</th>
+<th>谁读</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>messages/{日期}.jsonl</code></td>
+<td>当日消息全量原文档案</td>
+<td>monitor_poll 每轮</td>
+<td>启动时恢复去重集合；人工回溯</td>
+</tr>
+<tr>
+<td><code>pushes/{日期}.jsonl</code></td>
+<td>整理成品全文（Markdown）</td>
+<td>send_webhook 推送成功后</td>
+<td>同上；推送节奏回看</td>
+</tr>
+<tr>
+<td><code>state.json</code></td>
+<td>游标 msg_cursor_total / auth_status / 统计</td>
+<td>monitor_poll</td>
+<td>preflight、make status、次日续跑</td>
+</tr>
+<tr>
+<td><code>heartbeat</code></td>
+<td>存活心跳</td>
+<td>monitor_poll 每轮</td>
+<td>看门狗（备用模式）</td>
+</tr>
+<tr>
+<td><code>sms_code.txt</code></td>
+<td>验证码人机接力</td>
+<td><code>make auth-input-code</code></td>
+<td>登录流程轮询，用后即删</td>
+</tr>
+<tr>
+<td><code>browser-profile/</code></td>
+<td>登录态 Cookie（Chromium user-data-dir）</td>
+<td>登录流程</td>
+<td>轮询浏览器，跨日复用</td>
+</tr>
+<tr>
+<td><code>auth_history.jsonl</code></td>
+<td>登录/续期历史（Cookie 寿命观测）</td>
+<td>登录流程</td>
+<td>运维</td>
+</tr>
+</tbody>
+</table>
+<p><strong>跨日边界</strong>：runtime 档案按日切割，只服务当日运行与去重；跨日的知识沉淀交给 fupan-ge-wiki 的 collect→distill（消费 <code>直播课/history/</code>），本系统不越界。</p>
+<p><strong>⑤ memory（两份人写的配置 + 一份刻意的"无记忆"）</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>形态</th>
+<th>位置</th>
+<th>性质</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>运行配置 memory.md</td>
+<td><code>.trae/skills/live-monitor/memory.md</code>（webhook/手机号/分类体系/时间节奏）、<code>.trae/skills/hexun-live-login/memory.md</code>（手机号）</td>
+<td><strong>人写机读</strong>：敏感配置 + 分类权威定义；LLM 任务与脚本共同引用；git 忽略</td>
+</tr>
+<tr>
+<td>项目指令</td>
+<td><code>AGENTS.md</code>、<code>.trae/skills/*/SKILL.md</code>、<code>scripts/monitor/README.md</code></td>
+<td>面向 agent 与维护者的行为规范（工程边界、密钥红线、工作流）</td>
+</tr>
+<tr>
+<td>traecli 会话记忆</td>
+<td><code>~/.trae/</code> 会话存储</td>
+<td><strong>刻意不用</strong>：编辑任务全新 session、不 resume（常驻/恢复实测不可靠）——系统记忆全部由 runtime 档案承担，与模型会话解耦</td>
+</tr>
+</tbody>
+</table>
+<h3 id="13">1.3 一次推送的完整数据流（以一条干货消息为例）<a class="headerlink" href="#13" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>老师发言（直播页）
+ → [脚本] monitor_poll 60s 轮询提取，哈希查重确认新消息
+ → [持久化] 立即归档 messages/{日期}.jsonl（先存后处理，崩溃不丢）
+ → [context] 该消息进 pending_msgs.json，与 EDITOR_PROMPT 组装
+ → [LLM] traecli exec：读 prompt+消息 → 分类判断（如 💡交易技巧）→ 整理 Markdown
+ → [脚本] agent 调 Bash 执行 send_webhook.py '&lt;markdown&gt;'
+ → [推送] 飞书卡片送达用户群
+ → [持久化] send_webhook 成功后自动落盘 pushes/{日期}.jsonl（全文+哈希）
+ → [脚本] monitor_poll 记录本轮统计，touch heartbeat，游标写 state.json
+（LLM 编辑失败 → 自动重试一次 → 仍败记 deferred 日志留待盘后补推；消息已在 messages 档案，零丢失）
+</code></pre></div>
+<h3 id="14">1.4 设计原则一句话<a class="headerlink" href="#14" title="Permanent link">&para;</a></h3>
+<p><strong>脚本管可靠（重试/去重/自愈/落盘），LLM 管判断（分类/合并/提炼），runtime 档案管记忆，memory.md 管配置——四者各司其职，互不越界；模型会话被刻意排除在架构之外。</strong></p>
+<h2 id="_3">二、盘中监控<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h3 id="_4">轮询机制<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>频率</strong>：60 秒/轮（盘中）；连续 12 轮无新消息（total 不变）刷新页面一次（MQTT 断连自愈）。</li>
+<li><strong>提取</strong>：每轮取最近 40 条，<code>total</code>（消息总数）为游标；增量 = <code>index &gt;= 上轮 total</code> 且内容哈希未见过。</li>
+<li><strong>双去重</strong>：index 游标防重复处理 + MD5 哈希集合防 MQTT 补发旧消息重复推送；哈希集合启动时从当日档案恢复（跨重启有效，见第三节持久化表）。</li>
+<li><strong>登录态监测</strong>：每轮检测登录表单是否出现（出现即登录失效信号，人工模式下按登录恢复 SOP 处理）。</li>
+</ul>
+<h3 id="skill-60s">时段节奏（SKILL 约定，当前实现为固定 60s，待细化）<a class="headerlink" href="#skill-60s" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>时段</th>
+<th>建议频率</th>
+<th>重点关注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>09:15-09:30</td>
+<td>1-2 分钟</td>
+<td>🔔 竞价异动、一字板方向</td>
+</tr>
+<tr>
+<td>09:30-11:30</td>
+<td>2-5 分钟</td>
+<td>开盘方向、板块异动、干货</td>
+</tr>
+<tr>
+<td>11:30-13:00</td>
+<td>10-15 分钟</td>
+<td>午休降频</td>
+</tr>
+<tr>
+<td>13:00-14:30</td>
+<td>3-5 分钟</td>
+<td>午后方向、回流切换</td>
+</tr>
+<tr>
+<td>14:30-15:00</td>
+<td>2-3 分钟</td>
+<td>尾盘异动、次日预案</td>
+</tr>
+<tr>
+<td>15:00-15:15</td>
+<td>5 分钟</td>
+<td>盘后总结观察</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_5">自愈机制<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>浏览器崩溃</strong>：单轮失败重试 goto，连续 3 轮失败整 context 重建（2026-11-09 10:40 崩溃 5 小时未恢复的教训——原版只重试 goto 不重建，死循环空转）。</li>
+<li><strong>消息停更</strong>：连续 12 轮 total 不变自动 reload。</li>
+<li><strong>编辑任务失败</strong>：自动重试一次，仍败则记日志留待盘后补推（消息已在 messages 档案不丢失）；不降级转发（用户裁定：只推分类整理结果）。</li>
+</ul>
+<h2 id="_6">三、信息归纳<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
+<h3 id="7">分类体系（7 类）<a class="headerlink" href="#7" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>分类</th>
+<th>Emoji</th>
+<th>推送时机</th>
+<th>判断要点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>交易机会</td>
+<td>🎯</td>
+<td>立即</td>
+<td>明确可关注方向/板块/个股/买点节点</td>
+</tr>
+<tr>
+<td>风险提示</td>
+<td>⚠️</td>
+<td>立即</td>
+<td>走弱信号、回避方向、仓位警示</td>
+</tr>
+<tr>
+<td>行情播报</td>
+<td>📊</td>
+<td>完整梳理才推</td>
+<td>板块梳理（10点/午盘/收盘）、指数判断、连板结构</td>
+</tr>
+<tr>
+<td>交易技巧</td>
+<td>💡</td>
+<td><strong>话题讲完再推</strong></td>
+<td>方法论、模式、心态；严禁边讲边推</td>
+</tr>
+<tr>
+<td>新闻催化</td>
+<td>📰</td>
+<td>有内容才推</td>
+<td>政策、外围、行业事件</td>
+</tr>
+<tr>
+<td>案例分析</td>
+<td>📋</td>
+<td>有内容才推</td>
+<td>个股/板块走势拆解</td>
+</tr>
+<tr>
+<td>竞价异动</td>
+<td>🔔</td>
+<td>竞价时段</td>
+<td>一字板、竞价涨幅、方向选择</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_7">推送铁律<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>绝不出现人名</strong>（观点直接呈现，不透露来源）；</li>
+<li>同一话题多条消息<strong>合并成一条</strong>；</li>
+<li>同一观点不重复推，有新进展才更新；</li>
+<li>碎片互动、寒暄、免责声明<strong>不推</strong>（2026-11-09 实测：编辑任务对「个股指代不明、话未说完」的消息正确跳过）；</li>
+<li>质量优先于频率：重要干货多推，没价值一条不推。</li>
+</ol>
+<h3 id="prompt">编辑任务实现（prompt 分类机制）<a class="headerlink" href="#prompt" title="Permanent link">&para;</a></h3>
+<p>每批老师新消息触发一个<strong>独立的 traecli 单次进程</strong>（<code>traecli exec "&lt;编辑指令&gt;"</code>，非交互、带 PAT、stdin 关闭、外部 300s 超时）。</p>
+<p><strong>分类靠 prompt 完成</strong>：编辑指令（<code>scripts/monitor/core/monitor_poll.py</code> 的 <code>EDITOR_PROMPT</code>）内嵌完整分类定义——七类的触发条件与判断要点逐条写明，并指示 agent 参考 <code>.trae/skills/live-monitor/memory.md</code> 的分类体系原文。任务流程：读 <code>tmp/pending_msgs.json</code>（当批消息 JSON）→ 逐条判断分类 → 碎片跳过/同话题合并 → 达标内容整理成 Markdown（去人名、要点化、个股带代码）→ 立即用 Bash 调 <code>send_webhook.py</code> 推送 → 输出一行 <code>{pushed, skipped}</code> 统计。<strong>分类智能在模型侧，工程侧只负责触发与重试</strong>（两次失败记日志留待补推，不降级转发）。</p>
+<blockquote>
+<p>为何不用常驻 agent：2026-11-09 实测 traecli 循环会话的推送环节不可靠（过程输出不可见、resume 并发静默）；单次短任务稳定（当日验证 10+ 次）。</p>
+</blockquote>
+<h3 id="_8">当日持久化（三份档案）<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>档案</th>
+<th>内容</th>
+<th>写入方</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>runtime/messages/{日期}.jsonl</code></td>
+<td><strong>当日消息全量原文</strong>（含学员消息；每条 index + 内容哈希 + 全文），崩溃/重启后可回溯</td>
+<td>monitor_poll 每轮增量归档</td>
+</tr>
+<tr>
+<td><code>runtime/pushes/{日期}.jsonl</code></td>
+<td><strong>整理成品全文</strong>（标题 + 内容哈希 + 完整 Markdown），本地档案与跨重启去重双用途</td>
+<td>send_webhook 推送成功后自动落盘</td>
+</tr>
+<tr>
+<td><code>tmp/poll_out.jsonl</code></td>
+<td>轮询过程记录（total/登录态/增量/错误），调试用</td>
+<td>monitor_poll 每轮</td>
+</tr>
+</tbody>
+</table>
+<p><strong>跨重启去重</strong>：轮询进程启动时从当日 messages + pushes 两份档案恢复已处理内容哈希集合——MQTT 补发的旧消息、重启前已推过的内容不会重复推送（2026-11-09 上午重启重推竞价/梳理的教训修复）。</p>
+<p><strong>历史整理信息的保留</strong>：<code>pushes/{日期}.jsonl</code> 按日累积全部整理成品（Markdown 全文），可随时回看任意一天的推送内容与节奏；<code>state.json</code> 的 <code>msg_cursor_total</code> 保留当日游标。跨日的抽象沉淀（交易模式、板块档案等）不在本系统范围——由 fupan-ge-wiki 的 collect → distill 链路消费 <code>直播课/history/</code> 与快照后写入知识库（见第八节演进方向第 5 条）。</p>
+<h2 id="_9">四、推送链路<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>渠道</strong>：飞书群机器人 webhook（<code>open.feishu.cn/open-apis/bot/v2/hook/...</code>），存于<strong>项目根 <code>.env</code></strong>（<code>FUPANGE_LIVE_MONITOR_WEBHOOK</code>，600 权限、git 忽略）；加载优先级：环境变量 &gt; <code>.env</code> &gt; memory.md（旧方式兼容）。</li>
+<li><strong>格式</strong>：交互卡片——标题栏 = 分类 emoji + 时间 + 主题，按分类自动配色（🎯绿 / ⚠️红 / 📊蓝 / 💡橙 / 🔔紫 / 📰灰 / 📋青）；正文 = markdown 组件（粗体/引用/列表原生渲染）。</li>
+<li><strong>兼容</strong>：send_webhook 按域名自动分流，企微 webhook（markdown 格式）仍支持。</li>
+</ul>
+<h2 id="_10">五、登录与会话<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>登录方式</strong>：手机号 + 短信验证码（和讯仅支持此方式），登录框在 <code>reg.homeway.com.cn</code> iframe 内。</li>
+<li><strong>登录态</strong>：Cookie 持久化于 <code>runtime/browser-profile</code>，跨日复用（有效期以周计，失效时走恢复流程）。</li>
+<li><strong>验证码人机协作</strong>：脚本发起验证码 → 用户在对话中回传 → 写入 <code>runtime/sms_code.txt</code>（<code>make auth-input-code CODE=xxx</code>）→ 脚本轮询读取完成登录（spec FR-3A）。</li>
+<li><strong>风控对抗</strong>：网易易盾。无头模式被拦截（SDK 加载但弹层不渲染），必须 <strong>Xvfb 有头</strong>；发码多为智能无感知直过，登录可能触发滑块（<code>captcha_solver.py</code> ddddocr 缺口识别 + 拟人轨迹，重试 3 次降级）。</li>
+<li><strong>会话约束</strong>：发码与登录必须在<strong>同一浏览器会话</strong>内完成（前端状态绑定，跨会话报「请先发送短信验证码」）。</li>
+</ul>
+<h2 id="_11">六、调度与运维<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>crontab</strong>（交易日）：08:45 preflight 预检 → 08:50 启动 → 15:20 兜底回收；PAT 凭据与 PATH 在 cron 行内注入。</li>
+<li><strong>preflight 六项</strong>：交易日判断（API 异常按工作日放行）、traecli PAT 探活、浏览器 profile 含 Cookie、直播站连通、磁盘、.env 凭据配置完整性（手机号 + webhook，兼容旧 memory.md 方式）。</li>
+<li><strong>运维入口</strong>：<code>make help</code>（全部命令）、<code>make status</code>（游标/心跳/推送统计）、<code>make logs</code>、<code>make preflight</code>。</li>
+</ul>
+<h2 id="2026-11-09">七、已知问题与教训（2026-11-09 实盘首日）<a class="headerlink" href="#2026-11-09" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>根因</th>
+<th>处置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>traecli 全部「答非所问」</td>
+<td><code>exec</code> 子命令不存在（spec 设计误设）</td>
+<td>根命令 <code>-p</code> 非交互模式</td>
+</tr>
+<tr>
+<td>agent 静默退出</td>
+<td><code>-o</code> 参数不存在</td>
+<td>移除</td>
+</tr>
+<tr>
+<td>launcher 拉起即死</td>
+<td>make recipe 结束清理子进程</td>
+<td><code>setsid nohup</code> 后台化</td>
+</tr>
+<tr>
+<td>常驻 agent 轮询正常但不推送</td>
+<td>traecli 会话机制（过程不可见/并发静默）</td>
+<td>改「轮询 + 单次编辑任务」架构</td>
+</tr>
+<tr>
+<td>10:40 后下午无监控</td>
+<td>Chromium 崩溃，恢复逻辑只重试 goto 不重建</td>
+<td>连续 3 错整 context 重建</td>
+</tr>
+<tr>
+<td>重复推送竞价/梳理</td>
+<td>MQTT 补发 + 无内容去重</td>
+<td>MD5 哈希集合去重</td>
+</tr>
+<tr>
+<td>pkill 自匹配误杀自身命令</td>
+<td>模式串出现在复合命令行内</td>
+<td>拼接模式串 + 与文件名引用隔离</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_12">八、演进方向<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>轮询进程 systemd 化</strong>：开机自启 + 崩溃自动重启（替代 cron 单点 + 自建重建）；</li>
+<li><strong>常驻 agent 复活</strong>：traecli 会话机制稳定后可恢复常驻模式（launcher/watchdog 已删，git 历史 <code>afe54a9</code>~<code>be92f5d</code> 可溯），减少每批一次的进程/token 开销；</li>
+<li><strong>定时摘要节点</strong>：10:00 / 11:30 / 15:05 固定摘要与收盘健康度报告（当前仅事件驱动）；</li>
+<li><strong>智能降频</strong>：按 SKILL 时段表动态调整轮询间隔与午休降频；</li>
+<li><strong>盘后沉淀</strong>：当日推送与快照接入 fupan-ge-wiki 的 collect → distill 知识库链路（<code>runtime/snapshots/</code> 文件契约已预留）。</li>
+</ol>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.top", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+    
+  </body>
+</html>

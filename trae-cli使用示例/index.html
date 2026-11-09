@@ -1,0 +1,1178 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="无人值守直播盯盘智能体——和讯直播自动登录、盘中轮询、LLM 分类整理、飞书推送">
+      
+      
+      
+      
+        <link rel="prev" href="../%E8%84%9A%E6%9C%AC%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E/">
+      
+      
+        <link rel="next" href="../prompt%E6%A2%B3%E7%90%86/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
+    
+    
+      
+        <title>trae-cli 使用示例 - 直播智能体文档</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#trae-cli" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href=".." title="直播智能体文档" class="md-header__button md-logo" aria-label="直播智能体文档" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            直播智能体文档
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              trae-cli 使用示例
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="indigo"  aria-label="切换深色"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换深色" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="indigo"  aria-label="切换浅色"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换浅色" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  首页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../%E7%9B%B4%E6%92%AD%E7%9B%91%E6%8E%A7%E6%96%B9%E6%A1%88/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  直播监控方案
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../%E6%9E%B6%E6%9E%84%E5%AE%9A%E4%BD%8D%E4%B8%8E%E4%B8%9A%E7%95%8C%E5%AF%B9%E6%A0%87/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  架构定位与业界对标
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../%E8%84%9A%E6%9C%AC%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  脚本功能说明
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  trae-cli 使用示例
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../prompt%E6%A2%B3%E7%90%86/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Prompt 梳理
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../ops/deploy/" class="md-tabs__link">
+          
+  
+  
+  运维
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="直播智能体文档" class="md-nav__button md-logo" aria-label="直播智能体文档" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    直播智能体文档
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    首页
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E7%9B%B4%E6%92%AD%E7%9B%91%E6%8E%A7%E6%96%B9%E6%A1%88/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    直播监控方案
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E6%9E%B6%E6%9E%84%E5%AE%9A%E4%BD%8D%E4%B8%8E%E4%B8%9A%E7%95%8C%E5%AF%B9%E6%A0%87/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    架构定位与业界对标
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../%E8%84%9A%E6%9C%AC%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    脚本功能说明
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    trae-cli 使用示例
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    trae-cli 使用示例
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1x-2x" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        〇、版本与升级（1.x → 2.x）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#keyring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        一、认证（无 keyring 服务器）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exec" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        二、非交互单次任务（exec）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        三、单次任务里让 agent 干活（读文件 + 调脚本 + 输出统计）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        四、会话管理
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mcp-playwright" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        五、MCP 接入（以 Playwright 浏览器为例）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        六、长任务的正确姿势
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cron" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        七、cron 中使用的两个必需项（两代一致）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        八、速查
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prompt%E6%A2%B3%E7%90%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prompt 梳理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    运维
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    运维
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ops/deploy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    部署指南
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ops/login-recovery-sop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    登录恢复 SOP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1x-2x" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        〇、版本与升级（1.x → 2.x）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#keyring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        一、认证（无 keyring 服务器）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exec" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        二、非交互单次任务（exec）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        三、单次任务里让 agent 干活（读文件 + 调脚本 + 输出统计）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        四、会话管理
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mcp-playwright" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        五、MCP 接入（以 Playwright 浏览器为例）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        六、长任务的正确姿势
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cron" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        七、cron 中使用的两个必需项（两代一致）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        八、速查
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="trae-cli">trae-cli 实际使用示例<a class="headerlink" href="#trae-cli" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p>全部示例来自 2026-11-08/09 在 zxh@GPU 服务器（无图形界面）的实测。
+当前版本：<strong>TRAE CLI 0.214.1（2.x 线，Rust 版，<code>installation: public</code>）</strong>，2026-11-09 自 0.121.3 升级。
+内嵌手册：<code>traecli doc &lt;topic&gt;</code>；<code>traecli release-notes</code> 查看当前账号的发版说明。</p>
+</blockquote>
+<h2 id="1x-2x">〇、版本与升级（1.x → 2.x）<a class="headerlink" href="#1x-2x" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># 安装/升级 2.x（官方入口；0.x 的 install.sh 只给旧线）</span>
+sh<span class="w"> </span>-c<span class="w"> </span><span class="s2">"</span><span class="k">$(</span>curl<span class="w"> </span>-fsSL<span class="w"> </span>https://trae.cn/trae-cli/install_v2.sh<span class="k">)</span><span class="s2">"</span>
+
+<span class="c1"># 旧配置迁移：traecli.yaml → traecli.toml（MCP 等自动迁移，报告存 ~/.trae/coco-migration-report.txt）</span>
+traecli<span class="w"> </span>migrate
+traecli<span class="w"> </span>mcp<span class="w"> </span>list<span class="w">        </span><span class="c1"># 确认 MCP 已迁移</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>差异点</th>
+<th>1.x（0.121.3）</th>
+<th>2.x（0.214.1）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>非交互入口</td>
+<td>根命令 <code>-p</code>（exec 不存在）</td>
+<td><strong><code>traecli exec [PROMPT]</code></strong>（别名 <code>e</code>）</td>
+</tr>
+<tr>
+<td><code>-o</code> 参数</td>
+<td>静默退出</td>
+<td>合法（<code>--output-last-message</code>）</td>
+</tr>
+<tr>
+<td><code>--query-timeout</code></td>
+<td>支持</td>
+<td><strong>已移除</strong>（超时靠外部控制，如 <code>timeout 300</code>）</td>
+</tr>
+<tr>
+<td>权限</td>
+<td><code>-c permission_mode=...</code></td>
+<td><code>--permission-mode ...</code>（default/auto/bypass_permissions）或 <code>-s</code> 沙箱、<code>-y</code> 全放行</td>
+</tr>
+<tr>
+<td>keyring 报错</td>
+<td>每次打印噪音</td>
+<td>消失</td>
+</tr>
+<tr>
+<td>配置文件</td>
+<td><code>~/.trae/trae_cli.yaml</code></td>
+<td><code>~/.trae/traecli.toml</code>（<code>-c key=value</code> 覆盖，值为 TOML）</td>
+</tr>
+<tr>
+<td>stdin</td>
+<td>—</td>
+<td><strong>管道环境会等待 stdin</strong>，须 <code>&lt;/dev/null</code> 或显式喂入</td>
+</tr>
+</tbody>
+</table>
+<h2 id="keyring">一、认证（无 keyring 服务器）<a class="headerlink" href="#keyring" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># PAT 环境变量方式（2.x 同样支持；探活用 models）</span>
+<span class="nb">set</span><span class="w"> </span>-a<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>.<span class="w"> </span>~/.config/trae-cli/credentials.env<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">set</span><span class="w"> </span>+a<span class="w">   </span><span class="c1"># 内含 TRAECLI_PERSONAL_ACCESS_TOKEN</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$HOME</span>/.local/bin:<span class="nv">$PATH</span>
+traecli<span class="w"> </span>models<span class="w">          </span><span class="c1"># 列出模型即认证正常</span>
+
+<span class="c1"># 2.x 也有 login 子命令（交互环境可用）：traecli login --help</span>
+</code></pre></div>
+<h2 id="exec">二、非交互单次任务（exec）<a class="headerlink" href="#exec" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># 冒烟测试（注意 &lt;/dev/null 关闭 stdin）</span>
+<span class="nb">cd</span><span class="w"> </span>/path/to/project
+traecli<span class="w"> </span><span class="nb">exec</span><span class="w"> </span><span class="s2">"只回复两个字：成功"</span><span class="w"> </span>--permission-mode<span class="w"> </span>bypass_permissions<span class="w"> </span>--skip-git-repo-check<span class="w"> </span>&lt;/dev/null
+
+<span class="c1"># 完整形态：prompt 位置参数 + 会话 + 全放行 + 末条消息落盘</span>
+traecli<span class="w"> </span><span class="nb">exec</span><span class="w"> </span><span class="s2">"阅读 AGENTS.md 后总结本项目的运维入口"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--permission-mode<span class="w"> </span>bypass_permissions<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--session-id<span class="w"> </span>docs-<span class="k">$(</span>date<span class="w"> </span>+%m%d<span class="k">)</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--skip-git-repo-check<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span>/tmp/last-message.md<span class="w"> </span>&lt;/dev/null
+
+<span class="c1"># 事件流 JSONL（管道场景）</span>
+traecli<span class="w"> </span><span class="nb">exec</span><span class="w"> </span><span class="s2">"..."</span><span class="w"> </span>--json<span class="w"> </span>&lt;/dev/null
+
+<span class="c1"># 只放行特定命令（比 bypass 收敛）：Bash(模式) 白名单</span>
+traecli<span class="w"> </span><span class="nb">exec</span><span class="w"> </span><span class="s2">"..."</span><span class="w"> </span>--allowed-tool<span class="w"> </span><span class="s1">'Bash(python3 *)'</span><span class="w"> </span>--allowed-tool<span class="w"> </span>Read
+</code></pre></div>
+<p>实测输出尾部带 <code>tokens used</code> 统计；退出码 0 = 正常。</p>
+<h2 id="agent">三、单次任务里让 agent 干活（读文件 + 调脚本 + 输出统计）<a class="headerlink" href="#agent" title="Permanent link">&para;</a></h2>
+<p>本项目核心模式——直播消息分类编辑任务（<code>scripts/monitor/core/monitor_poll.py</code>）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span>
+    <span class="s2">"traecli"</span><span class="p">,</span> <span class="s2">"exec"</span><span class="p">,</span> <span class="n">PROMPT</span><span class="p">,</span>                       <span class="c1"># PROMPT 指示：读 JSON → 分类 → Bash 调 send_webhook → 输出 {"pushed": N, "skipped": M}</span>
+    <span class="s2">"--permission-mode"</span><span class="p">,</span> <span class="s2">"bypass_permissions"</span><span class="p">,</span>
+    <span class="s2">"--session-id"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"push-</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>      <span class="c1"># 每任务全新 ID，不复用不 resume</span>
+    <span class="s2">"--skip-git-repo-check"</span><span class="p">],</span>
+    <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>     <span class="c1"># 超时靠外部（2.x 无 --query-timeout）</span>
+    <span class="n">stdin</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">DEVNULL</span><span class="p">)</span>                        <span class="c1"># 关键：关闭 stdin</span>
+</code></pre></div>
+<blockquote>
+<p>稳定性结论（两代一致）：单次短任务稳定；常驻/循环会话不可靠（过程输出不可见、并发 resume 静默）。</p>
+</blockquote>
+<h2 id="_1">四、会话管理<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>traecli<span class="w"> </span>resume<span class="w"> </span>--last<span class="w">            </span><span class="c1"># 恢复最近会话（交互）</span>
+traecli<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>resume<span class="w"> </span>--last<span class="w"> </span><span class="s2">"继续"</span><span class="w"> </span><span class="c1"># 非交互恢复</span>
+traecli<span class="w"> </span>fork<span class="w"> </span>/<span class="w"> </span>archive<span class="w"> </span>/<span class="w"> </span>delete<span class="w">   </span><span class="c1"># 分叉/归档/删除会话</span>
+</code></pre></div>
+<p>同 session-id 多进程并发仍需避免。</p>
+<h2 id="mcp-playwright">五、MCP 接入（以 Playwright 浏览器为例）<a class="headerlink" href="#mcp-playwright" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># 2.x 语法（-- 分隔命令）：</span>
+traecli<span class="w"> </span>mcp<span class="w"> </span>add<span class="w"> </span>browser<span class="w"> </span>--<span class="w"> </span>/home/zxh/.local/bin/npx<span class="w"> </span>-y<span class="w"> </span>@playwright/mcp@latest<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--browser<span class="w"> </span>chromium<span class="w"> </span>--user-data-dir<span class="w"> </span>/绝对路径/runtime/browser-profile<span class="w"> </span>--headless
+
+<span class="c1"># 1.x 旧配置用 traecli migrate 自动迁移（本文写作时已验证 browser 配置成功迁移）</span>
+traecli<span class="w"> </span>mcp<span class="w"> </span>list
+</code></pre></div>
+<p>agent 获得 <code>browser_navigate / browser_snapshot / browser_click / browser_type / browser_evaluate</code> 工具；同一 user-data-dir 单实例锁（Chromium Singleton），并发报 <code>Browser is already in use</code>。</p>
+<p>MCP 启动较慢（npx 拉包）时，调用方给足等待（1.x 用 <code>--mcp-init-wait-seconds</code>；2.x 默认等待已改善，必要时用外部 <code>timeout</code> 兜底）。</p>
+<h2 id="_2">六、长任务的正确姿势<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>不要一次 exec 跑数小时循环。<strong>外部循环管可靠性（轮询/心跳/重试），单次任务管智能（分类/整理）</strong>——参考 <code>scripts/monitor/core/monitor_poll.py</code>：Python 60s 轮询 → 每批新消息触发一次 ≤5 分钟的 exec。</p>
+<h2 id="cron">七、cron 中使用的两个必需项（两代一致）<a class="headerlink" href="#cron" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code># PATH 补 $HOME/.local/bin + PAT 注入
+50 8 * * 1-5 cd /项目根 &amp;&amp; set -a &amp;&amp; . $HOME/.config/trae-cli/credentials.env &amp;&amp; set +a &amp;&amp; PATH=$HOME/.local/bin:$PATH make monitor-start &gt;&gt; runtime/logs/cron.log 2&gt;&amp;1
+</code></pre></div>
+<p>裸环境验证：<code>env -i HOME=$HOME SHELL=/bin/sh /bin/sh -c '&lt;整段命令&gt;'</code>。</p>
+<h2 id="_3">八、速查<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>traecli exec "..."</code></td>
+<td>非交互任务（别名 e）</td>
+</tr>
+<tr>
+<td><code>traecli models</code></td>
+<td>列模型（认证探活）</td>
+</tr>
+<tr>
+<td><code>traecli migrate</code></td>
+<td>1.x 配置迁移到 toml</td>
+</tr>
+<tr>
+<td><code>traecli release-notes</code></td>
+<td>当前账号发版说明</td>
+</tr>
+<tr>
+<td><code>traecli doctor</code></td>
+<td>诊断</td>
+</tr>
+<tr>
+<td><code>-o &lt;file&gt;</code></td>
+<td>末条消息写入文件</td>
+</tr>
+<tr>
+<td><code>--json</code></td>
+<td>JSONL 事件流</td>
+</tr>
+<tr>
+<td><code>--permission-mode bypass_permissions</code></td>
+<td>放行审批</td>
+</tr>
+<tr>
+<td><code>-s danger-full-access</code> / <code>-y</code></td>
+<td>沙箱/审批全放（危险，仅隔离环境）</td>
+</tr>
+<tr>
+<td><code>--allowed-tool 'Bash(pattern)'</code></td>
+<td>命令白名单</td>
+</tr>
+<tr>
+<td><code>--ephemeral</code></td>
+<td>不落盘会话（一次性任务）</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.top", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+    
+  </body>
+</html>
