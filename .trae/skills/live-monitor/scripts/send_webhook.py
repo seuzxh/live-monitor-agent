@@ -18,7 +18,9 @@ import os
 import re
 import sys
 import json
+import hashlib
 import urllib.request
+from datetime import datetime
 from pathlib import Path
 
 
@@ -102,6 +104,31 @@ def check_ok(result: dict, url: str) -> bool:
     return result.get("errcode") == 0
 
 
+def archive_push(content: str) -> None:
+    """推送全文落盘 runtime/pushes/{日期}.jsonl（含内容哈希，供跨重启去重与本地档案）。
+
+    runtime 目录解析：环境变量 MONITOR_RUNTIME_DIR 优先，否则按仓库布局推导
+    （本文件位于 <根>/.trae/skills/live-monitor/scripts/）。失败静默（不影响推送主流程）。
+    """
+    try:
+        rt = os.environ.get("MONITOR_RUNTIME_DIR") or str(
+            Path(__file__).resolve().parents[4] / "runtime")
+        pushes = Path(rt) / "pushes"
+        pushes.mkdir(parents=True, exist_ok=True)
+        rec = {
+            "ts": datetime.now().strftime("%H:%M:%S"),
+            "date": datetime.now().strftime("%Y-%m-%d"),
+            "title": next((l[3:].strip() for l in content.splitlines()
+                           if l.startswith("## ")), "")[:60],
+            "hash": hashlib.md5(re.sub(r"\s", "", content)[:300].encode()).hexdigest(),
+            "content": content,
+        }
+        with (pushes / f"{datetime.now().strftime('%Y%m%d')}.jsonl").open("a", encoding="utf-8") as f:
+            f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+    except Exception:
+        pass
+
+
 def send(content: str, webhook_url: str = None) -> dict:
     content = content.strip()
     if not content:
@@ -123,6 +150,7 @@ def send(content: str, webhook_url: str = None) -> dict:
             result = json.loads(body)
             if not check_ok(result, url):
                 sys.exit(1)
+            archive_push(content)
             return result
     except Exception as e:
         sys.stderr.write(f"ERROR: 推送失败: {e}\n")

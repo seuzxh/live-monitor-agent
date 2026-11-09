@@ -112,10 +112,36 @@ def main() -> int:
     stall = 0
     err_streak = 0
     import hashlib
-    seen = set()  # 已处理消息内容哈希（防 MQTT 补发重复推送）
+    seen = set()  # 已处理消息内容哈希（防 MQTT 补发重复推送；启动时从当日档案恢复）
 
     def msg_hash(t: str) -> str:
         return hashlib.md5(re.sub(r"\s", "", t)[:200].encode()).hexdigest()
+
+    def today_path(sub: str) -> Path:
+        return RUNTIME / sub / f"{datetime.now().strftime('%Y%m%d')}.jsonl"
+
+    # 恢复当日已处理记录：messages（原文归档）+ pushes（整理成品，由 send_webhook 落盘）
+    for _sub in ("messages", "pushes"):
+        _p = today_path(_sub)
+        if _p.exists():
+            for _line in _p.read_text(encoding="utf-8").splitlines():
+                try:
+                    seen.add(json.loads(_line)["hash"])
+                except Exception:
+                    continue
+
+    def archive_messages(msgs: list) -> None:
+        """当日消息全量归档（含非老师消息），崩溃/重启后可回溯。"""
+        try:
+            mp = today_path("messages")
+            mp.parent.mkdir(parents=True, exist_ok=True)
+            with mp.open("a", encoding="utf-8") as f:
+                for m in msgs:
+                    f.write(json.dumps({"index": m.get("index"),
+                                        "hash": msg_hash(m["text"]),
+                                        "text": m["text"]}, ensure_ascii=False) + "\n")
+        except Exception:
+            pass
 
     with sync_playwright() as p:
         def make_ctx():
@@ -142,6 +168,8 @@ def main() -> int:
                     if h not in seen:
                         seen.add(h)
                         fresh.append(m)
+                if fresh:
+                    archive_messages(fresh)  # 全量归档（含学员消息，供回溯）
                 if last_total == 0:
                     fresh = []  # 重启首轮纯基线：不推送（防重复），记录 total 起点
                 elif total > last_total:
