@@ -38,7 +38,7 @@ skills/
 3. 其余推送分类、格式、时间节奏规则可按需调整
 
 > `scripts/send_webhook.py` 会自动从 `memory.md` 解析 webhook 地址，无需改脚本。
-> 也可用环境变量 `LIVE_MONITOR_WEBHOOK` 覆盖。
+> 也可用环境变量 `FUPANGE_LIVE_MONITOR_WEBHOOK` 覆盖。
 
 ## 隐私与安全提示
 

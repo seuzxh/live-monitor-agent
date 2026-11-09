@@ -10,8 +10,8 @@
 - 平台：和讯财道 zhibo.homeway.com.cn
 - 房间：11605（复盘哥专栏 VIP直播室）
 - 主讲：李朋（皆明）、廖峥（争气2026）
-- 登录手机号：见项目根 `.env` 的 `HEXUN_LOGIN_PHONE`（勿在本文件存明文；仅用于本平台登录，严禁外泄）
-- Webhook：见项目根 `.env` 的 `LIVE_MONITOR_WEBHOOK`（加载优先级：环境变量 > .env > 本文件）
+- 登录手机号：见项目根 `.env` 的 `FUPANGE_HEXUN_LOGIN_PHONE`（勿在本文件存明文；仅用于本平台登录，严禁外泄）
+- Webhook：见项目根 `.env` 的 `FUPANGE_LIVE_MONITOR_WEBHOOK`（加载优先级：环境变量 > .env > 本文件）
   - 格式示例：https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=your-webhook-key-here
 - 推送脚本：`{skill_dir}/scripts/send_webhook.py`（自动从本文件解析上面的 webhook 地址；支持命令行参数/管道/-f 文件三种传内容方式；勿用 curl）
 

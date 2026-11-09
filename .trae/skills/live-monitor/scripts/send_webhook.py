@@ -12,7 +12,7 @@
     echo "内容" | python3 send_webhook.py        # 从标准输入读取
     python3 send_webhook.py -f content.md        # 从文件读取
 
-Webhook 地址自动从同技能目录的 memory.md 解析，也可用环境变量 LIVE_MONITOR_WEBHOOK 覆盖。
+Webhook 地址自动从同技能目录的 memory.md 解析，也可用环境变量 FUPANGE_LIVE_MONITOR_WEBHOOK 覆盖。
 """
 import os
 import re
@@ -40,12 +40,12 @@ def load_project_env() -> dict:
 
 def resolve_webhook_url() -> str:
     # 优先级：进程环境变量 > 项目 .env > memory.md（历史兼容）
-    env_url = os.environ.get("LIVE_MONITOR_WEBHOOK", "").strip()
+    env_url = os.environ.get("FUPANGE_LIVE_MONITOR_WEBHOOK", "").strip()
     if env_url:
         return env_url
     proj = load_project_env()
-    if proj.get("LIVE_MONITOR_WEBHOOK"):
-        return proj["LIVE_MONITOR_WEBHOOK"]
+    if proj.get("FUPANGE_LIVE_MONITOR_WEBHOOK"):
+        return proj["FUPANGE_LIVE_MONITOR_WEBHOOK"]
     memory_path = Path(__file__).resolve().parent.parent / "memory.md"
     if memory_path.exists():
         text = memory_path.read_text(encoding="utf-8")
@@ -54,7 +54,7 @@ def resolve_webhook_url() -> str:
             r"|https://open\.feishu\.cn/open-apis/bot/v2/hook/[0-9a-f\-]+", text)
         if m:
             return m.group(0)
-    sys.stderr.write("ERROR: 未找到 webhook 地址（检查 环境变量 LIVE_MONITOR_WEBHOOK / 项目 .env / memory.md）\n")
+    sys.stderr.write("ERROR: 未找到 webhook 地址（检查 环境变量 FUPANGE_LIVE_MONITOR_WEBHOOK / 项目 .env / memory.md）\n")
     sys.exit(2)
 
 

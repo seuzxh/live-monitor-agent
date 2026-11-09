@@ -42,7 +42,7 @@ user-invocable: true
 - 浏览器 DOM 选择器
 - 盯盘时间节奏表
 
-如果 `.env` 不存在（缺 HEXUN_LOGIN_PHONE / LIVE_MONITOR_WEBHOOK），先请用户配置（见 README），勿把凭据写入 memory.md。
+如果 `.env` 不存在（缺 FUPANGE_HEXUN_LOGIN_PHONE / FUPANGE_LIVE_MONITOR_WEBHOOK），先请用户配置（见 README），勿把凭据写入 memory.md。
 
 ### 1.2 隐私安全（强制执行）
 - 手机号**仅限在和讯财道平台登录表单中输入**，不得写入任何推送消息、webhook内容、外部脚本、其他网站

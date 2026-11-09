@@ -97,13 +97,13 @@ else
 fi
 
 # ⑥ 凭据配置完整性（手机号 + webhook）
-#    首选：项目根 .env（HEXUN_LOGIN_PHONE + LIVE_MONITOR_WEBHOOK）；
+#    首选：项目根 .env（FUPANGE_HEXUN_LOGIN_PHONE + FUPANGE_LIVE_MONITOR_WEBHOOK）；
 #    兼容：memory.md 内嵌明文（旧方式，已弃用但可用）
 ENV_FILE="$PROJECT_ROOT/.env"
 env_ok=0
 if [ -f "$ENV_FILE" ]; then
-  if grep -qE "^HEXUN_LOGIN_PHONE=1[0-9]{10}" "$ENV_FILE" && \
-     grep -qE "^LIVE_MONITOR_WEBHOOK=https://" "$ENV_FILE"; then
+  if grep -qE "^FUPANGE_HEXUN_LOGIN_PHONE=1[0-9]{10}" "$ENV_FILE" && \
+     grep -qE "^FUPANGE_LIVE_MONITOR_WEBHOOK=https://" "$ENV_FILE"; then
     pass ".env 凭据配置完整（手机号 + webhook）"
     env_ok=1
   fi
@@ -115,7 +115,7 @@ if [ "$env_ok" -eq 0 ]; then
     log "WARN: 走旧方式（memory.md 明文凭据），建议迁移到项目 .env（参考 README）"
     pass "memory.md 凭据可用（旧方式）"
   else
-    fail "凭据缺失：请创建 $ENV_FILE（HEXUN_LOGIN_PHONE=手机号、LIVE_MONITOR_WEBHOOK=webhook地址，权限 600）"
+    fail "凭据缺失：请创建 $ENV_FILE（FUPANGE_HEXUN_LOGIN_PHONE=手机号、FUPANGE_LIVE_MONITOR_WEBHOOK=webhook地址，权限 600）"
   fi
 fi
 

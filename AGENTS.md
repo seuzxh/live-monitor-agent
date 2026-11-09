@@ -23,7 +23,7 @@
 
 ## 密钥与账号红线
 
-- 凭据（登录手机号、推送 webhook）统一存**项目根 `.env`**（`HEXUN_LOGIN_PHONE` / `LIVE_MONITOR_WEBHOOK`，600 权限、git 忽略），由用户本人填写；智能体不代收、不代填、不回显内容。`memory.md` 只放业务规则，不再存敏感明文。
+- 凭据（登录手机号、推送 webhook）统一存**项目根 `.env`**（`FUPANGE_HEXUN_LOGIN_PHONE` / `FUPANGE_LIVE_MONITOR_WEBHOOK`，600 权限、git 忽略），由用户本人填写；智能体不代收、不代填、不回显内容。`memory.md` 只放业务规则，不再存敏感明文。
 - traecli 认证用 PAT 环境变量 `TRAECLI_PERSONAL_ACCESS_TOKEN` 注入（无 keyring 服务器唯一可行方式），凭据文件 `~/.config/trae-cli/credentials.env` 权限 600；令牌本体不进仓库。
 - **trae-cli 配置与使用约定**：凡涉及 trae-cli 的配置或用法选型，先查官方文档 https://docs.trae.cn/cli_about-trae-code-cli-2 ，对照当前版本（`traecli --version`）确认后选最佳方案，不凭记忆或旧经验直接写（CLI 1.x/2.x 命令面差异大，2.x 已无 `doc` 子命令）。
 - 手机号、短信验证码、Cookie 仅用于和讯财道登录流程；不进推送、不进日志。

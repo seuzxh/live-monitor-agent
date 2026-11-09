@@ -26,7 +26,7 @@ set -a && . ~/.config/trae-cli/credentials.env && set +a
 PATH=$HOME/.local/bin:$PATH traecli models
 
 # ④ 配置凭据（项目根 .env，600 权限，git 忽略；memory.md 仅业务规则不再存敏感值）
-printf 'HEXUN_LOGIN_PHONE=<和讯登录手机号>\nLIVE_MONITOR_WEBHOOK=<飞书或企微webhook>\n' > .env
+printf 'FUPANGE_HEXUN_LOGIN_PHONE=<和讯登录手机号>\nFUPANGE_LIVE_MONITOR_WEBHOOK=<飞书或企微webhook>\n' > .env
 chmod 600 .env
 cp .trae/skills/live-monitor/memory.template.md .trae/skills/live-monitor/memory.md
 cp .trae/skills/hexun-live-login/memory.template.md .trae/skills/hexun-live-login/memory.md

@@ -33,7 +33,7 @@ make preflight   # 交易日预检（非交易日静默退出）
 
 ```bash
 # ① 凭据（项目根 .env，600 权限，git 忽略）
-printf 'HEXUN_LOGIN_PHONE=<和讯登录手机号>\nLIVE_MONITOR_WEBHOOK=<飞书群机器人webhook>\n' > .env
+printf 'FUPANGE_HEXUN_LOGIN_PHONE=<和讯登录手机号>\nFUPANGE_LIVE_MONITOR_WEBHOOK=<飞书群机器人webhook>\n' > .env
 chmod 600 .env
 # ② 业务规则载体（不含敏感值）
 cp .trae/skills/live-monitor/memory.template.md .trae/skills/live-monitor/memory.md
