@@ -76,11 +76,12 @@ def llm_edit_and_push(new_teacher_msgs: list) -> bool:
                 k, v = line.split("=", 1)
                 env[k.strip()] = v.strip()
     r = subprocess.run(
-        ["traecli", "-p", EDITOR_PROMPT.format(msg_file=msg_file),
+        ["traecli", "exec", EDITOR_PROMPT.format(msg_file=msg_file),
+         "--permission-mode", "bypass_permissions",
          "--session-id", f"push-{int(time.time())}",
-         "-c", "permission_mode=bypass_permissions",
-         "--query-timeout", "4m", "--bash-tool-timeout", "1m"],
-        capture_output=True, text=True, timeout=300, cwd=str(ROOT), env=env)
+         "--skip-git-repo-check"],
+        capture_output=True, text=True, timeout=300, cwd=str(ROOT), env=env,
+        stdin=subprocess.DEVNULL)
     ok = r.returncode == 0 and re.search(r"[\"']pushed[\"']", r.stdout or "")
     (TMP / "editor_last.log").write_text(
         f"rc={r.returncode}\n{r.stdout[-600:] if r.stdout else ''}\n{r.stderr[-300:] if r.stderr else ''}",
