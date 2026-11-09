@@ -4,6 +4,9 @@
 PROJECT_ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 export MONITOR_RUNTIME_DIR := $(PROJECT_ROOT)/runtime
 MON := scripts/monitor
+CORE := $(MON)/core
+LOGIN := $(MON)/login
+LEGACY := $(MON)/legacy-agent
 
 .PHONY: help deploy preflight monitor-start monitor-stop \
         auth-input-code captcha-test \
@@ -22,17 +25,17 @@ preflight: ## 手动跑交易日预检
 	@bash $(MON)/preflight.sh
 
 monitor-start: ## 启动盯盘（轮询+LLM分类推送；生产由 cron 触发）
-	@setsid nohup xvfb-run -a -s "-screen 0 1440x900x24" python3 $(MON)/monitor_poll.py 60 >/dev/null 2>&1 &
+	@setsid nohup xvfb-run -a -s "-screen 0 1440x900x24" python3 $(CORE)/monitor_poll.py 60 >/dev/null 2>&1 &
 	@sleep 3; cat $(MONITOR_RUNTIME_DIR)/monitor.pid 2>/dev/null >/dev/null && true; echo "monitor_poll 已后台启动（日志: tmp/poll_out.jsonl）"
 
 monitor-agent-start: ## 【备用】常驻 traecli agent 模式（会话机制待修复）
-	@setsid nohup python3 $(MON)/launcher.py --runtime-dir $(MONITOR_RUNTIME_DIR) >/dev/null 2>&1 &
+	@setsid nohup python3 $(LEGACY)/launcher.py --runtime-dir $(MONITOR_RUNTIME_DIR) >/dev/null 2>&1 &
 
 monitor-stop: ## 手动停止盯盘
 	@bash $(MON)/force_cleanup.sh
 
 status: ## 查看运行状态（PID/心跳年龄/auth_status/今日统计）
-	@python3 -c "import sys; sys.path.insert(0,'$(MON)'); from runtime_state import RuntimeState; rs=RuntimeState('$(MONITOR_RUNTIME_DIR)'); import time; age=rs.heartbeat_age(); print(f\"auth_status : {rs.auth_status}\"); print(f\"心跳年龄    : {'无心跳' if age<0 else f'{int(age)} 秒'}\"); print(f\"monitor PID : {rs.read_pid()}\"); print(f\"消息游标    : {rs.msg_cursor}\"); print(f\"今日推送    : {rs.today_push_count()} 条\"); print(f\"运行统计    : {rs.stats()}\")"
+	@python3 -c "import sys; sys.path.insert(0,'$(CORE)'); from runtime_state import RuntimeState; rs=RuntimeState('$(MONITOR_RUNTIME_DIR)'); import time; age=rs.heartbeat_age(); print(f\"auth_status : {rs.auth_status}\"); print(f\"心跳年龄    : {'无心跳' if age<0 else f'{int(age)} 秒'}\"); print(f\"monitor PID : {rs.read_pid()}\"); print(f\"消息游标    : {rs.msg_cursor}\"); print(f\"今日推送    : {rs.today_push_count()} 条\"); print(f\"运行统计    : {rs.stats()}\")"
 
 logs: ## tail 当日日志
 	@tail -f $(MONITOR_RUNTIME_DIR)/logs/$$(date +%Y%m%d).log
@@ -44,13 +47,13 @@ test: ## 运行外壳层全部单元测试
 
 auth-input-code: ## 回传短信验证码: make auth-input-code CODE=123456
 	@if [ -z "$(CODE)" ]; then echo "用法: make auth-input-code CODE=6位数字"; exit 2; fi
-	@bash $(MON)/auth_input_code.sh $(CODE)
+	@bash $(LOGIN)/auth_input_code.sh $(CODE)
 
 captcha-test: ## 用存档样本离线回归滑块识别准确率
-	@python3 $(MON)/captcha_solver.py track 200 --seed 42
+	@python3 $(LOGIN)/captcha_solver.py track 200 --seed 42
 
 auth-local-login: ## 【本地电脑】有头登录 + 打包 profile
-	@bash $(MON)/auth_local_login.sh
+	@bash $(LOGIN)/auth_local_login.sh
 
 auth-upload: ## 【本地电脑】上传 profile: make auth-upload HOST=user@server
 	@if [ -z "$(HOST)" ]; then echo "用法: make auth-upload HOST=user@server"; exit 2; fi
@@ -60,7 +63,7 @@ auth-verify: ## 【服务器】解压替换 profile + 无头验证清单（FR-6�
 	@python3 $(MON)/verify_auth.py --runtime-dir $(MONITOR_RUNTIME_DIR)
 
 auth-vnc-start: ## 【服务器】应急 noVNC 有头续期（临时端口，带一次性令牌）
-	@bash $(MON)/auth_vnc.sh start
+	@bash $(LOGIN)/auth_vnc.sh start
 
 auth-vnc-stop: ## 【服务器】关闭 noVNC
-	@bash $(MON)/auth_vnc.sh stop
+	@bash $(LOGIN)/auth_vnc.sh stop

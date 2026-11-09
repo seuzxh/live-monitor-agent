@@ -7,7 +7,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "scripts" / "monitor"))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "scripts" / "monitor" / "login"))
 
 from runtime_state import RuntimeState, EXPIRED, VALID  # noqa: E402
 from verify_auth import run_checklist  # noqa: E402

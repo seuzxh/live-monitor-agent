@@ -24,7 +24,7 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "core"))
 
 from runtime_state import RuntimeState, DEFAULT_RUNTIME_DIR, VALID  # noqa: E402
 

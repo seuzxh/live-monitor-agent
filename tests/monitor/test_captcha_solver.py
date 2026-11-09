@@ -6,7 +6,7 @@ import sys
 import unittest
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "scripts" / "monitor"))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "scripts" / "monitor" / "login"))
 
 from captcha_solver import (  # noqa: E402
     b64_to_bytes,

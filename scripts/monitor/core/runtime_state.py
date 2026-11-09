@@ -20,7 +20,7 @@ from pathlib import Path
 VALID = "valid"
 EXPIRED = "expired"
 
-DEFAULT_RUNTIME_DIR = Path(__file__).resolve().parent.parent.parent / "runtime"
+DEFAULT_RUNTIME_DIR = Path(__file__).resolve().parent.parent.parent.parent / "runtime"
 
 
 class RuntimeState:

@@ -61,7 +61,7 @@ traecli exec "..." --allowed-tool 'Bash(python3 *)' --allowed-tool Read
 
 ## 三、单次任务里让 agent 干活（读文件 + 调脚本 + 输出统计）
 
-本项目核心模式——直播消息分类编辑任务（`scripts/monitor/monitor_poll.py`）：
+本项目核心模式——直播消息分类编辑任务（`scripts/monitor/core/monitor_poll.py`）：
 
 ```python
 subprocess.run([
@@ -102,7 +102,7 @@ MCP 启动较慢（npx 拉包）时，调用方给足等待（1.x 用 `--mcp-ini
 
 ## 六、长任务的正确姿势
 
-不要一次 exec 跑数小时循环。**外部循环管可靠性（轮询/心跳/重试），单次任务管智能（分类/整理）**——参考 `scripts/monitor/monitor_poll.py`：Python 60s 轮询 → 每批新消息触发一次 ≤5 分钟的 exec。
+不要一次 exec 跑数小时循环。**外部循环管可靠性（轮询/心跳/重试），单次任务管智能（分类/整理）**——参考 `scripts/monitor/core/monitor_poll.py`：Python 60s 轮询 → 每批新消息触发一次 ≤5 分钟的 exec。
 
 ## 七、cron 中使用的两个必需项（两代一致）
 

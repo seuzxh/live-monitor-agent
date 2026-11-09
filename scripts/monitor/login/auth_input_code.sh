@@ -4,7 +4,7 @@
 # 写入 runtime/sms_code.txt，agent 轮询此文件获取验证码
 set -eu
 
-PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 RUNTIME_DIR="${MONITOR_RUNTIME_DIR:-$PROJECT_ROOT/runtime}"
 CODE_FILE="$RUNTIME_DIR/sms_code.txt"
 

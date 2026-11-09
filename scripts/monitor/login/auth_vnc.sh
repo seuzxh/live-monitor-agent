@@ -4,7 +4,7 @@
 # stop:  关闭全部组件并收紧端口
 set -u
 
-PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 RUNTIME_DIR="${MONITOR_RUNTIME_DIR:-$PROJECT_ROOT/runtime}"
 STATE_DIR="$RUNTIME_DIR/vnc"
 PID_FILE="$STATE_DIR/session.pid"

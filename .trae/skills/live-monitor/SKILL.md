@@ -92,7 +92,7 @@ browser_navigate: url = "https://zhibo.homeway.com.cn/11605/vips.html"
    - 无人值守模式（`MONITOR_RUNTIME_DIR` 存在）：企微推送"登录已失效，验证码已发送，请在 4 分钟内执行 `make auth-input-code CODE=<6位>`"；然后**每 10 秒读一次** `$MONITOR_RUNTIME_DIR/sms_code.txt`，读到 6 位数字即为验证码，读完删除该文件
 5. **滑块处理（FR-3B）**：点击获取验证码或登录后若出现滑动滑块验证：
    - `browser_evaluate` 提取滑块背景图与缺口小图（canvas 用 `toDataURL()`，img 用 `src`，均 base64）
-   - 将两个 base64 写入临时文件，执行 `python3 scripts/monitor/captcha_solver.py solve <bg文件> <slice文件> <slice页x> <slider页x>`
+   - 将两个 base64 写入临时文件，执行 `python3 scripts/monitor/login/captcha_solver.py solve <bg文件> <slice文件> <slice页x> <slider页x>`
    - 从返回 JSON 取 `track` 点序列，按序回放：`mouse.down` 于 slider 中心 → 逐点 `mouse.move`（每点间隔其 `delay_ms`）→ `mouse.up` 于最后一点
    - 检测滑块消失/验证通过文案；失败则刷新验证码重试，**最多 3 次**
 6. **输入验证码并登录**：拿到验证码后 `browser_type` 输入，点"登录"，等 3-5 秒
@@ -296,7 +296,7 @@ send('''## 【标题】...''')
 
 当以无人值守模式运行（cron/launcher 拉起，`MONITOR_RUNTIME_DIR` 环境变量存在）时，收尾阶段必须额外完成以下落盘动作，供外壳层看门狗与次日启动消费：
 
-1. **写 state.json**（项目 `scripts/monitor/runtime_state.py` 的 RuntimeState，也可直接写 JSON）：
+1. **写 state.json**（项目 `scripts/monitor/core/runtime_state.py` 的 RuntimeState，也可直接写 JSON）：
    - `msg_cursor_total` = 最后一轮提取的消息总数（游标不回退）
    - `stats.polls` = 当日轮询次数；`stats.pushes` = 当日推送条数；`stats.mqtt_reconnects` = MQTT 断连次数
 2. **追加 pushes 记录**：每条推送向 `runtime/pushes/{YYYYMMDD}.jsonl` 追加一行 `{"ts","category","hash"}`，hash 用 `RuntimeState.content_hash(text)`（SHA1 of stripped text），供重启去重

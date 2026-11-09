@@ -24,11 +24,11 @@ import time
 from datetime import datetime
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "core"))
 
 from runtime_state import RuntimeState, EXPIRED, DEFAULT_RUNTIME_DIR  # noqa: E402
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 
 EXIT_OK = 0
 EXIT_ERROR = 1
@@ -57,16 +57,16 @@ def pid_alive(pid: int) -> bool:
 def build_command(runtime_dir: Path | None = None) -> list[str]:
     """构造 traecli 启动命令（独立函数便于测试）。
 
-    注意：trae-cli 0.121.x 没有 exec 子命令（spec 设计时误设），
-    非交互模式是根命令 + -p，权限由 -c permission_mode 控制。
+    trae-cli 2.x（0.214+）：exec 子命令为正规非交互入口，
+    --permission-mode 放权，-o 写末条消息，stdin 须关闭（DEVNULL）。
     """
+    out_dir = runtime_dir if runtime_dir is not None else DEFAULT_RUNTIME_DIR
     return [
-        "traecli", "-p", MONITOR_PROMPT,
-        "-c", "permission_mode=bypass_permissions",
+        "traecli", "exec", MONITOR_PROMPT,
+        "--permission-mode", "bypass_permissions",
         "--session-id", f"live-{datetime.now().strftime('%Y%m%d')}",
-        "--mcp-init-wait-seconds", "60",
-        "--query-timeout", "6h",
-        "--bash-tool-timeout", "10m",
+        "--skip-git-repo-check",
+        "-o", str(out_dir / "logs" / "last-message.md"),
     ]
 
 
@@ -114,6 +114,7 @@ def main() -> int:
         proc = subprocess.Popen(
             cmd,
             cwd=str(PROJECT_ROOT),
+            stdin=subprocess.DEVNULL,  # trae-cli 2.x 管道环境会等待 stdin
             stdout=logf,
             stderr=subprocess.STDOUT,
             env=env,

@@ -7,7 +7,7 @@ import time
 import unittest
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "scripts" / "monitor"))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "scripts" / "monitor" / "core"))
 
 from runtime_state import RuntimeState, VALID, EXPIRED  # noqa: E402
 

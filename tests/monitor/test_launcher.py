@@ -7,7 +7,7 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "scripts" / "monitor"))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "scripts" / "monitor" / "legacy-agent"))
 
 import launcher  # noqa: E402
 from runtime_state import RuntimeState, EXPIRED  # noqa: E402
@@ -27,9 +27,9 @@ class TestBuildCommand(unittest.TestCase):
     def test_command_shape(self):
         cmd = launcher.build_command()
         self.assertEqual(cmd[0], "traecli")
-        # 0.121.x 无 exec 子命令：根命令 + -p 非交互模式
-        self.assertEqual(cmd[1], "-p")
-        self.assertIn("permission_mode=bypass_permissions", cmd)
+        # 2.x：exec 为正规非交互入口
+        self.assertEqual(cmd[1], "exec")
+        self.assertIn("--permission-mode", cmd)
         # prompt 在 -p 后一位，且包含盯盘关键词
         self.assertIn("live-monitor", cmd[2])
         self.assertIn("盯盘", cmd[2])

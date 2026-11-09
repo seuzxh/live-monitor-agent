@@ -4,7 +4,7 @@
 # 用法: auth_local_login.sh [profile输出目录]
 set -eu
 
-PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 PROFILE_OUT="${1:-$HOME/.hexun-monitor-profile}"
 LIVE_URL="https://zhibo.homeway.com.cn/11605/vips.html"
 PACK_SCRIPT="$(dirname "$0")/profile_pack.sh"

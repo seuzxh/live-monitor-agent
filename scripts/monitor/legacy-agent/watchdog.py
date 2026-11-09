@@ -24,7 +24,7 @@ import time
 from datetime import datetime
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "core"))
 
 from runtime_state import RuntimeState, DEFAULT_RUNTIME_DIR  # noqa: E402
 
@@ -35,7 +35,7 @@ ALERT_THROTTLE = 1800         # 同类告警 30 分钟一次
 DEFAULT_END_HHMM = "15:20"
 MAX_AUTO_RESTARTS_PER_DAY = 1
 
-WEBHOOK_SCRIPT = Path(__file__).resolve().parent.parent.parent / \
+WEBHOOK_SCRIPT = Path(__file__).resolve().parent.parent.parent.parent / \
     ".trae" / "skills" / "live-monitor" / "scripts" / "send_webhook.py"
 
 
