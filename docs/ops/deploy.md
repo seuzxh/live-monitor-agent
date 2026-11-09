@@ -56,9 +56,9 @@ make monitor-start
 > `set -a && . credentials.env`（把 PAT 注入环境，launcher 拉起的 traecli 靠它认证）。
 
 ```cron
-# 盯盘主任务：交易日 09:05 预检 + 09:10 启动 + 15:20 兜底回收
-5  9 * * 1-5 cd /home/zxh/projects/14.fupange/直播智能体 && set -a && . $HOME/.config/trae-cli/credentials.env && set +a && PATH=$HOME/.local/bin:$PATH make preflight >> runtime/logs/cron.log 2>&1
-10 9 * * 1-5 cd /home/zxh/projects/14.fupange/直播智能体 && set -a && . $HOME/.config/trae-cli/credentials.env && set +a && PATH=$HOME/.local/bin:$PATH make monitor-start >> runtime/logs/cron.log 2>&1
+# 盯盘主任务：交易日 08:45 预检 + 08:50 启动 + 15:20 兜底回收
+45 8 * * 1-5 cd /home/zxh/projects/14.fupange/直播智能体 && set -a && . $HOME/.config/trae-cli/credentials.env && set +a && PATH=$HOME/.local/bin:$PATH make preflight >> runtime/logs/cron.log 2>&1
+50 8 * * 1-5 cd /home/zxh/projects/14.fupange/直播智能体 && set -a && . $HOME/.config/trae-cli/credentials.env && set +a && PATH=$HOME/.local/bin:$PATH make monitor-start >> runtime/logs/cron.log 2>&1
 20 15 * * 1-5 cd /home/zxh/projects/14.fupange/直播智能体 && PATH=$HOME/.local/bin:$PATH make monitor-stop >> runtime/logs/cron.log 2>&1
 ```
 
