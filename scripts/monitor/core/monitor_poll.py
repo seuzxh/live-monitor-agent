@@ -43,13 +43,6 @@ EXTRACT_JS = """
 """
 
 
-def push(msg_md: str) -> bool:
-    import subprocess
-    r = subprocess.run(["python3", str(WEBHOOK), msg_md],
-                       capture_output=True, text=True, timeout=30)
-    return r.returncode == 0
-
-
 EDITOR_PROMPT = """你是直播盯盘推送编辑。读取文件 {msg_file}（JSON 数组，每项含时间与老师发言原文）。
 
 任务（严格按 .trae/skills/live-monitor/memory.md 的分类体系）：
@@ -87,19 +80,6 @@ def llm_edit_and_push(new_teacher_msgs: list) -> bool:
         f"rc={r.returncode}\n{r.stdout[-600:] if r.stdout else ''}\n{r.stderr[-300:] if r.stderr else ''}",
         encoding="utf-8")
     return ok
-
-
-def teacher_push(teacher_text: str) -> None:
-    """兜底：LLM 编辑失败时的全文转发（去人名）。"""
-    m = re.search(r"\b(\d{1,2}:\d{2})\b", teacher_text)
-    ts = m.group(1) if m else datetime.now().strftime("%H:%M")
-    body = re.sub(r"^(李朋|廖峥)\s*\|?\s*", "", teacher_text).strip()
-    body = body.replace("|", "\n").strip()
-    if len(body) > 900:
-        body = body[:900] + "…"
-    md = f"## 【📊直播实录】{ts} 老师发言\n\n> " + "\n> ".join(
-        l for l in body.splitlines() if l.strip())
-    push(md)
 
 
 def main() -> int:
@@ -199,16 +179,15 @@ def main() -> int:
                     mode = "llm"
                     try:
                         if not llm_edit_and_push(teacher_new):
-                            mode = "fallback"
+                            mode = "llm-retry" if llm_edit_and_push(teacher_new) else "llm-failed"
                     except Exception as e:
                         out.write(json.dumps({"ts": rec["ts"], "llm_err": str(e)[:80]}) + "\n")
-                        mode = "fallback"
-                    if mode == "fallback":
-                        for tm in teacher_new:
-                            try:
-                                teacher_push(tm["text"])
-                            except Exception:
-                                pass
+                        mode = "llm-failed"
+                    if mode == "llm-failed":
+                        # 消息已在 messages 档案不丢失；不降级转发（用户裁定），
+                        # 留待盘后人工补推（backfill 流程）
+                        out.write(json.dumps({"ts": rec["ts"], "deferred": len(teacher_new),
+                                               "action": "编辑任务两次失败，留待补推"}) + "\n")
                     with (pushes_dir / f"{datetime.now().strftime('%Y%m%d')}.jsonl").open("a", encoding="utf-8") as pf:
                         for tm in teacher_new:
                             pf.write(json.dumps({"ts": rec["ts"], "mode": mode,

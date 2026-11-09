@@ -8,7 +8,7 @@ cd "$PROJECT_ROOT"
 
 echo "===== [1/5] 系统依赖 ====="
 sudo apt update
-sudo apt install -y gnome-keyring python3 python3-pip python3-venv jq curl
+sudo apt install -y python3 python3-pip python3-venv jq curl
 
 echo "===== [2/5] TraeCode CLI ====="
 if ! command -v traecli >/dev/null 2>&1; then
