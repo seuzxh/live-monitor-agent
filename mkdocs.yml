@@ -37,6 +37,7 @@ nav:
   - 架构定位与业界对标: 架构定位与业界对标.md
   - 脚本功能说明: 脚本功能说明.md
   - trae-cli 使用示例: trae-cli使用示例.md
+  - Prompt 梳理: prompt梳理.md
   - 运维:
       - 部署指南: ops/deploy.md
       - 登录恢复 SOP: ops/login-recovery-sop.md
