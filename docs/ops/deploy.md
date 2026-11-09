@@ -53,7 +53,7 @@ make monitor-start
 ## 2. crontab 配置
 
 > 两处必需项（缺一 cron 必失败）：`PATH` 补 `$HOME/.local/bin`（cron 默认 PATH 找不到 traecli）；
-> `set -a && . credentials.env`（把 PAT 注入环境，launcher 拉起的 traecli 靠它认证）。
+> `set -a && . credentials.env`（把 PAT 注入环境，monitor_poll 的编辑任务靠它认证）。
 
 ```cron
 # 盯盘主任务：交易日 08:45 预检 + 08:50 启动 + 15:20 兜底回收
