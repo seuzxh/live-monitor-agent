@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-企业微信群机器人 Webhook 推送脚本（live-monitor 技能专用）
+群机器人 Webhook 推送脚本（live-monitor 技能专用）
+
+支持两类 webhook（按地址自动分流）：
+- 企业微信 qyapi.weixin.qq.com：markdown 消息
+- 飞书     open.feishu.cn：post 富文本（Markdown 标题→卡片标题，其余按行转换）
 
 用法：
     python3 send_webhook.py "推送内容(Markdown)"
     echo "内容" | python3 send_webhook.py        # 从标准输入读取
     python3 send_webhook.py -f content.md        # 从文件读取
 
-Webhook 地址自动从同技能目录的 memory.md 解析（正则匹配 qyapi.weixin.qq.com webhook URL），
-也可用环境变量 LIVE_MONITOR_WEBHOOK 覆盖。
+Webhook 地址自动从同技能目录的 memory.md 解析，也可用环境变量 LIVE_MONITOR_WEBHOOK 覆盖。
 """
 import os
 import re
@@ -24,14 +27,16 @@ def resolve_webhook_url() -> str:
     env_url = os.environ.get("LIVE_MONITOR_WEBHOOK", "").strip()
     if env_url:
         return env_url
-    # 2) 从 memory.md 解析
+    # 2) 从 memory.md 解析（企微或飞书）
     memory_path = Path(__file__).resolve().parent.parent / "memory.md"
     if memory_path.exists():
         text = memory_path.read_text(encoding="utf-8")
-        m = re.search(r"https://qyapi\.weixin\.qq\.com/cgi-bin/webhook/send\?key=[0-9a-f\-]+", text)
+        m = re.search(
+            r"https://qyapi\.weixin\.qq\.com/cgi-bin/webhook/send\?key=[0-9a-f\-]+"
+            r"|https://open\.feishu\.cn/open-apis/bot/v2/hook/[0-9a-f\-]+", text)
         if m:
             return m.group(0)
-    sys.stderr.write("ERROR: 未找到 webhook 地址（memory.md 无 qyapi webhook URL，且未设 LIVE_MONITOR_WEBHOOK）\n")
+    sys.stderr.write("ERROR: 未找到 webhook 地址（memory.md 无企微/飞书 webhook URL，且未设 LIVE_MONITOR_WEBHOOK）\n")
     sys.exit(2)
 
 
@@ -50,14 +55,43 @@ def read_content() -> str:
     sys.exit(2)
 
 
+def md_to_feishu_post(md: str) -> dict:
+    """Markdown → 飞书 post 富文本：首个 ## 行做标题，其余按行转换。"""
+    lines = [l.rstrip() for l in md.strip().splitlines() if l.strip()]
+    title, rows = "", []
+    for l in lines:
+        if l.startswith("## ") and not title:
+            title = l[3:].strip()
+            continue
+        t = l
+        if t.startswith(">"):
+            t = "▍ " + t.lstrip("> ")
+        t = re.sub(r"\*\*(.+?)\*\*", r"\1", t)
+        rows.append([{"tag": "text", "text": t}])
+    return {"msg_type": "post",
+            "content": {"post": {"zh_cn": {"title": title or "盯盘推送", "content": rows}}}}
+
+
+def build_payload(content: str, url: str) -> dict:
+    if "open.feishu.cn" in url:
+        return md_to_feishu_post(content)
+    return {"msgtype": "markdown", "markdown": {"content": content}}
+
+
+def check_ok(result: dict, url: str) -> bool:
+    if "open.feishu.cn" in url:
+        # 飞书：新版 {"code":0,...}；旧版 {"StatusCode":0,"StatusMessage":"success"}
+        return result.get("code") == 0 or result.get("StatusCode") == 0
+    return result.get("errcode") == 0
+
+
 def send(content: str, webhook_url: str = None) -> dict:
     content = content.strip()
     if not content:
         sys.stderr.write("ERROR: 推送内容为空\n")
         sys.exit(2)
     url = webhook_url or resolve_webhook_url()
-    payload = {"msgtype": "markdown", "markdown": {"content": content}}
-    data = json.dumps(payload, ensure_ascii=False).encode("utf-8")
+    data = json.dumps(build_payload(content, url), ensure_ascii=False).encode("utf-8")
     req = urllib.request.Request(
         url,
         data=data,
@@ -68,9 +102,9 @@ def send(content: str, webhook_url: str = None) -> dict:
         with urllib.request.urlopen(req, timeout=15) as resp:
             body = resp.read().decode("utf-8")
             print(f"Status: {resp.status}")
-            print(f"Response: {body}")
+            print(f"Response: {body[:200]}")
             result = json.loads(body)
-            if result.get("errcode") != 0:
+            if not check_ok(result, url):
                 sys.exit(1)
             return result
     except Exception as e:

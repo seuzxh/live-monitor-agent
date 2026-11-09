@@ -55,15 +55,18 @@ def pid_alive(pid: int) -> bool:
 
 
 def build_command(runtime_dir: Path | None = None) -> list[str]:
-    """构造 traecli exec 启动命令（独立函数便于测试）。"""
-    out_dir = runtime_dir if runtime_dir is not None else DEFAULT_RUNTIME_DIR
+    """构造 traecli 启动命令（独立函数便于测试）。
+
+    注意：trae-cli 0.121.x 没有 exec 子命令（spec 设计时误设），
+    非交互模式是根命令 + -p，权限由 -c permission_mode 控制。
+    """
     return [
-        "traecli", "exec",
-        "--sandbox", "workspace-write",
-        "--ask-for-approval", "never",
-        "--skip-git-repo-check",
-        "-o", str(out_dir / "logs" / "last-message.md"),
-        MONITOR_PROMPT,
+        "traecli", "-p", MONITOR_PROMPT,
+        "-c", "permission_mode=bypass_permissions",
+        "--session-id", f"live-{datetime.now().strftime('%Y%m%d')}",
+        "--mcp-init-wait-seconds", "60",
+        "--query-timeout", "6h",
+        "--bash-tool-timeout", "10m",
     ]
 
 

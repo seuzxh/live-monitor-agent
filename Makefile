@@ -22,7 +22,7 @@ preflight: ## 手动跑交易日预检
 	@bash $(MON)/preflight.sh
 
 monitor-start: ## 手动启动盯盘（调试用；生产由 cron 触发）
-	@python3 $(MON)/launcher.py --runtime-dir $(MONITOR_RUNTIME_DIR)
+	@setsid nohup python3 $(MON)/launcher.py --runtime-dir $(MONITOR_RUNTIME_DIR) >/dev/null 2>&1 &
 
 monitor-stop: ## 手动停止盯盘
 	@bash $(MON)/force_cleanup.sh

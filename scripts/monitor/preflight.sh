@@ -96,13 +96,13 @@ else
   fail "磁盘空间不足 500MB（可用 $((avail_kb/1024))MB），清理 logs/snapshots"
 fi
 
-# ⑥ memory.md 配置完整性（手机号 + webhook）
+# ⑥ memory.md 配置完整性（手机号 + webhook，支持企微/飞书）
 if [ -f "$MEMORY_FILE" ]; then
   if grep -qE "1[0-9]{10}" "$MEMORY_FILE" && \
-     grep -q "qyapi.weixin.qq.com" "$MEMORY_FILE"; then
+     grep -qE "qyapi\.weixin\.qq\.com|open\.feishu\.cn/open-apis/bot" "$MEMORY_FILE"; then
     pass "memory.md 配置完整"
   else
-    fail "memory.md 缺少手机号或 webhook，请检查 $MEMORY_FILE"
+    fail "memory.md 缺少手机号或 webhook（企微/飞书），请检查 $MEMORY_FILE"
   fi
 else
   fail "memory.md 不存在，请从 memory.template.md 复制并配置: $MEMORY_FILE"

@@ -27,12 +27,12 @@ class TestBuildCommand(unittest.TestCase):
     def test_command_shape(self):
         cmd = launcher.build_command()
         self.assertEqual(cmd[0], "traecli")
-        self.assertEqual(cmd[1], "exec")
-        self.assertIn("--ask-for-approval", cmd)
-        self.assertIn("never", cmd)
-        # prompt 在末尾，且包含盯盘关键词
-        self.assertIn("live-monitor", cmd[-1])
-        self.assertIn("盯盘", cmd[-1])
+        # 0.121.x 无 exec 子命令：根命令 + -p 非交互模式
+        self.assertEqual(cmd[1], "-p")
+        self.assertIn("permission_mode=bypass_permissions", cmd)
+        # prompt 在 -p 后一位，且包含盯盘关键词
+        self.assertIn("live-monitor", cmd[2])
+        self.assertIn("盯盘", cmd[2])
 
 
 class TestMainFlow(unittest.TestCase):
