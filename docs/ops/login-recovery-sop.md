@@ -1,7 +1,7 @@
 # 登录恢复完整手册（三级自愈 SOP）
 
 > 对应 spec：`.trae/specs/live-monitor-agent/spec.md`（FR-3 / FR-3A / FR-3B / FR-4 / FR-5 / FR-6）
-> 触发条件：企微收到"登录已失效"类告警，或 `make status` 显示 `auth_status: expired`
+> 触发条件：飞书群收到"登录已失效"类告警，或 `make status` 显示 `auth_status: expired`
 
 ## 自愈层级总览
 
@@ -17,7 +17,7 @@
 
 ## 第一级：辅助登录（优先，人工参与度最低）
 
-**你的动作只有一步**：收到企微告警"验证码已发送"后，在任意能 SSH 到服务器的终端执行：
+**你的动作只有一步**：收到飞书群告警"验证码已发送"后，在任意能 SSH 到服务器的终端执行：
 
 ```bash
 ssh <服务器>
@@ -49,7 +49,7 @@ ssh <服务器> && cd /home/zxh/projects/14.fupange/直播智能体 && make auth
 
 验证清单（FR-6，全过才算成功）：① URL 为 vips.html ② 无 `input[type=tel]` ③ 消息容器非空 ④ auth_status 重置 valid ⑤ 续期历史落盘。任一项不过 → 按输出排查 → 回到 ①。
 
-验证通过后：当日若想立即恢复盯盘执行 `make monitor-start`；否则次日 09:10 cron 自动拉起。
+验证通过后：当日若想立即恢复盯盘执行 `make monitor-start`；否则次日 08:50 cron 自动拉起。
 
 ## 第二级路径 B：noVNC 应急（本地电脑不在手边）
 

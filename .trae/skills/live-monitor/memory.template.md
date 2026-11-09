@@ -12,7 +12,8 @@
 - 主讲：李朋（皆明）、廖峥（争气2026）
 - 登录手机号：见项目根 `.env` 的 `FUPANGE_HEXUN_LOGIN_PHONE`（勿在本文件存明文；仅用于本平台登录，严禁外泄）
 - Webhook：见项目根 `.env` 的 `FUPANGE_LIVE_MONITOR_WEBHOOK`（加载优先级：环境变量 > .env > 本文件）
-  - 格式示例：https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=your-webhook-key-here
+  - 飞书示例：https://open.feishu.cn/open-apis/bot/v2/hook/xxxxxxxx-xxxx-xxxx
+  - 企微示例：https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=your-key
 - 推送脚本：`{skill_dir}/scripts/send_webhook.py`（自动从本文件解析上面的 webhook 地址；支持命令行参数/管道/-f 文件三种传内容方式；勿用 curl）
 
 ## 隐私安全规则（强制执行）

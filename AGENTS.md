@@ -4,7 +4,7 @@
 
 ## 项目定位
 
-- 无人值守盯盘智能体：交易日自动登录和讯财道「复盘哥专栏 VIP直播室」，按交易时段轮询提炼，推送企业微信；独立于 fupan-ge-wiki 知识库仓库运行。
+- 无人值守盯盘智能体：交易日自动登录和讯财道「复盘哥专栏 VIP直播室」，按交易时段轮询提炼，推送飞书群；独立于 fupan-ge-wiki 知识库仓库运行。
 - 四层结构：`.trae/skills/`（live-monitor 盯盘、hexun-live-login 登录）+ `scripts/monitor/`（core 运行主链 / login 登录恢复 / legacy-agent 常驻备用，详见 docs/脚本功能说明.md）+ `tests/monitor/`（单元测试）+ `runtime/`（运行产物）。
 - 知识库侧（fupan-ge-wiki）的 hexun-live-collect / distill 消费 `直播课/history/`，与本目录解耦；仅 hexun-live-login 技能在两侧各持一份副本。
 
@@ -19,7 +19,7 @@
 ## 运行状态与环境
 
 - 运行环境：Python 3.10；Playwright Chromium 在 `~/.cache/ms-playwright`；traecli 在 `~/.local/bin`（机器级，不在项目内）。
-- 调度：crontab 交易日 09:05 preflight、09:10 monitor-start、15:20 monitor-stop，cron 行内注入 PAT 与 PATH。
+- 调度：crontab 交易日 08:45 preflight、08:50 monitor-start、15:20 monitor-stop，cron 行内注入 PAT 与 PATH。
 - 运维命令一律收口 Makefile（`make help` 列全部）；查状态 `make status`，看日志 `make logs`。
 
 ## 密钥与账号红线
@@ -39,4 +39,4 @@
 
 - 外壳层改动跑 `make test`（tests/monitor 单元测试，42 项）。
 - 运行类结论三态：已部署 / 已部署待配置（memory.md 未完成）/ 未验证。
-- 端到端验收以交易日 `make preflight` 通过且企业微信实收推送为准；未实收推送不得宣称盯盘正常。
+- 端到端验收以交易日 `make preflight` 通过且飞书群实收推送为准；未实收推送不得宣称盯盘正常。

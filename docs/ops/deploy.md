@@ -31,12 +31,12 @@ chmod 600 .env
 cp .trae/skills/live-monitor/memory.template.md .trae/skills/live-monitor/memory.md
 cp .trae/skills/hexun-live-login/memory.template.md .trae/skills/hexun-live-login/memory.md
 
-# ⑤ 验证预检（应在交易日 09:05 前执行；非交易日静默退出）
+# ⑤ 验证预检（应在交易日 08:45 前执行；非交易日静默退出）
 make preflight
 
 # ⑥ 手动触发一次完整盯盘验证（P1 验收）
 make monitor-start
-# 观察：runtime/logs/当日.log + 企业微信是否收到推送
+# 观察：runtime/logs/当日.log + 飞书群是否收到推送卡片
 ```
 
 ### 无 sudo 部署差异（2026-11-08 实测）
