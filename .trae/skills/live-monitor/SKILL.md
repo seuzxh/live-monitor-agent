@@ -36,14 +36,13 @@ user-invocable: true
 ## 一、启动前检查
 
 ### 1.1 读取记忆文件（必做）
-首先读取 `{skill_dir}/memory.md`，获取最新配置：
-- Webhook 地址、登录手机号
+首先读取 `{skill_dir}/memory.md`，获取业务规则（分类体系、时间节奏）；凭据（Webhook、登录手机号）从项目根 `.env` 读取（优先级：环境变量 > `.env` > memory.md）：
 - 推送分类体系（7类标签）和格式规范
 - 推送优先级、时机判断、智能轮询策略
 - 浏览器 DOM 选择器
 - 盯盘时间节奏表
 
-如果 `memory.md` 不存在，先询问用户 webhook 地址和登录手机号，再创建基础记忆文件。
+如果 `.env` 不存在（缺 HEXUN_LOGIN_PHONE / LIVE_MONITOR_WEBHOOK），先请用户配置（见 README），勿把凭据写入 memory.md。
 
 ### 1.2 隐私安全（强制执行）
 - 手机号**仅限在和讯财道平台登录表单中输入**，不得写入任何推送消息、webhook内容、外部脚本、其他网站

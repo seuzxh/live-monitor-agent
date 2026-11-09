@@ -17,3 +17,4 @@ tmp/
 
 # ===== 架构图 visual-check 证据截图（本地工件，不入库）=====
 docs/*.visual-check.*.png
+.env

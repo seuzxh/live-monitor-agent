@@ -24,12 +24,28 @@ from datetime import datetime
 from pathlib import Path
 
 
+def load_project_env() -> dict:
+    """加载项目根 .env（KEY=VALUE，# 注释）。文件不存在返回空。"""
+    env_path = Path(__file__).resolve().parents[4] / ".env"
+    if not env_path.exists():
+        return {}
+    vals = {}
+    for line in env_path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if line and not line.startswith("#") and "=" in line:
+            k, v = line.split("=", 1)
+            vals[k.strip()] = v.strip()
+    return vals
+
+
 def resolve_webhook_url() -> str:
-    # 1) 环境变量优先
+    # 优先级：进程环境变量 > 项目 .env > memory.md（历史兼容）
     env_url = os.environ.get("LIVE_MONITOR_WEBHOOK", "").strip()
     if env_url:
         return env_url
-    # 2) 从 memory.md 解析（企微或飞书）
+    proj = load_project_env()
+    if proj.get("LIVE_MONITOR_WEBHOOK"):
+        return proj["LIVE_MONITOR_WEBHOOK"]
     memory_path = Path(__file__).resolve().parent.parent / "memory.md"
     if memory_path.exists():
         text = memory_path.read_text(encoding="utf-8")
@@ -38,7 +54,7 @@ def resolve_webhook_url() -> str:
             r"|https://open\.feishu\.cn/open-apis/bot/v2/hook/[0-9a-f\-]+", text)
         if m:
             return m.group(0)
-    sys.stderr.write("ERROR: 未找到 webhook 地址（memory.md 无企微/飞书 webhook URL，且未设 LIVE_MONITOR_WEBHOOK）\n")
+    sys.stderr.write("ERROR: 未找到 webhook 地址（检查 环境变量 LIVE_MONITOR_WEBHOOK / 项目 .env / memory.md）\n")
     sys.exit(2)
 
 

@@ -25,9 +25,7 @@ user-invocable: true
 ## 一、启动前准备
 
 ### 1.1 读取配置（必做）
-读取 `{skill_dir}/memory.md`，获取：
-- 直播室基础URL和默认房间号
-- 登录手机号
+读取 `{skill_dir}/memory.md`（平台信息、DOM 速查）与项目根 `.env` 的 `HEXUN_LOGIN_PHONE`（登录手机号；优先级：环境变量 > `.env` > memory.md 明文，勿在 memory.md 存明文）：
 - DOM选择器（弹窗关闭按钮、消息容器、登录表单等）
 - 已知坑位清单
 
@@ -172,7 +170,7 @@ browser_navigate: url = "<直播室URL>"
 - 如果登录入口在 iframe 里（少见），需先进入 iframe：用 `browser_snapshot` 看是否有 iframe 元素，然后用 `contentDocument` 访问
 
 ### 4.3 输入手机号
-1. 从 memory.md 读取手机号
+1. 从项目根 `.env` 的 `HEXUN_LOGIN_PHONE` 读取手机号（环境变量优先）
 2. `browser_snapshot` 找到手机号输入框的 ref（特征：`input`，`type=tel`，或 placeholder 含"手机号"/"手机"）
 3. 先 `browser_click` 激活输入框，再 `browser_type` 输入手机号
 4. **手机号只在这一步出现**，不写入任何日志/推送/脚本

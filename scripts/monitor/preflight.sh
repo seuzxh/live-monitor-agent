@@ -96,16 +96,27 @@ else
   fail "磁盘空间不足 500MB（可用 $((avail_kb/1024))MB），清理 logs/snapshots"
 fi
 
-# ⑥ memory.md 配置完整性（手机号 + webhook，支持企微/飞书）
-if [ -f "$MEMORY_FILE" ]; then
-  if grep -qE "1[0-9]{10}" "$MEMORY_FILE" && \
-     grep -qE "qyapi\.weixin\.qq\.com|open\.feishu\.cn/open-apis/bot" "$MEMORY_FILE"; then
-    pass "memory.md 配置完整"
-  else
-    fail "memory.md 缺少手机号或 webhook（企微/飞书），请检查 $MEMORY_FILE"
+# ⑥ 凭据配置完整性（手机号 + webhook）
+#    首选：项目根 .env（HEXUN_LOGIN_PHONE + LIVE_MONITOR_WEBHOOK）；
+#    兼容：memory.md 内嵌明文（旧方式，已弃用但可用）
+ENV_FILE="$PROJECT_ROOT/.env"
+env_ok=0
+if [ -f "$ENV_FILE" ]; then
+  if grep -qE "^HEXUN_LOGIN_PHONE=1[0-9]{10}" "$ENV_FILE" && \
+     grep -qE "^LIVE_MONITOR_WEBHOOK=https://" "$ENV_FILE"; then
+    pass ".env 凭据配置完整（手机号 + webhook）"
+    env_ok=1
   fi
-else
-  fail "memory.md 不存在，请从 memory.template.md 复制并配置: $MEMORY_FILE"
+fi
+if [ "$env_ok" -eq 0 ]; then
+  if [ -f "$MEMORY_FILE" ] && \
+     grep -qE "1[0-9]{10}" "$MEMORY_FILE" && \
+     grep -qE "qyapi\.weixin\.qq\.com|open\.feishu\.cn/open-apis/bot" "$MEMORY_FILE"; then
+    log "WARN: 走旧方式（memory.md 明文凭据），建议迁移到项目 .env（参考 README）"
+    pass "memory.md 凭据可用（旧方式）"
+  else
+    fail "凭据缺失：请创建 $ENV_FILE（HEXUN_LOGIN_PHONE=手机号、LIVE_MONITOR_WEBHOOK=webhook地址，权限 600）"
+  fi
 fi
 
 log "===== preflight all passed ====="
