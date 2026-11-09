@@ -1,0 +1,42 @@
+site_name: 直播智能体文档
+site_description: 无人值守直播盯盘智能体——和讯直播自动登录、盘中轮询、LLM 分类整理、飞书推送
+site_url: ""
+docs_dir: docs
+
+theme:
+  name: material
+  language: zh
+  palette:
+    - scheme: default
+      primary: deep purple
+      toggle: {icon: material/weather-night, name: 切换深色}
+    - scheme: slate
+      primary: deep purple
+      toggle: {icon: material/weather-sunny, name: 切换浅色}
+  features:
+    - navigation.tabs
+    - navigation.top
+    - search.highlight
+    - content.code.copy
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - tables
+  - toc:
+      permalink: true
+
+nav:
+  - 首页: index.md
+  - 直播监控方案: 直播监控方案.md
+  - 架构定位与业界对标: 架构定位与业界对标.md
+  - 脚本功能说明: 脚本功能说明.md
+  - trae-cli 使用示例: trae-cli使用示例.md
+  - 运维:
+      - 部署指南: ops/deploy.md
+      - 登录恢复 SOP: ops/login-recovery-sop.md
