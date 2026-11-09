@@ -30,7 +30,7 @@ is_trading_day() {
     log "周末，非交易日"
     return 1
   fi
-  # 调聚合节假日 API（失败时保守放行：宁可误跑，不可漏跑）
+  # 调聚合节假日 API（失败或响应异常时保守放行：宁可误跑，不可漏跑）
   local today resp
   today=$(date +%Y-%m-%d)
   resp=$(curl -s --max-time 8 "https://timor.tech/api/holiday/info/$today" || true)
@@ -39,10 +39,15 @@ is_trading_day() {
     return 0
   fi
   # timor.tech: {"code":0,"holiday":null} 工作日; holiday 非 null 为节假日
+  # 响应非 JSON（如 Cloudflare 挑战页）视为 API 异常，按工作日放行
+  if ! echo "$resp" | grep -q '"holiday"'; then
+    log "节假日 API 响应异常（非 JSON，前 40 字符: ${resp:0:40}），按工作日放行"
+    return 0
+  fi
   if echo "$resp" | grep -q '"holiday":null'; then
     return 0
   fi
-  log "节假日 API 判定今日非交易日: $resp"
+  log "节假日 API 判定今日非交易日"
   return 1
 }
 
