@@ -10,7 +10,7 @@
 | **EDITOR_PROMPT** | `scripts/monitor/core/monitor_poll.py:53` | LLM 编辑任务总指令：驱动每批老师消息的分类/合并/提炼/推送 | live-monitor 技能的 memory.md 分类体系 + SKILL.md 推送铁律，2026-11-09 分类整理推送模式上线时编写 | **现役（生产主链）** |
 | **AGENTS.md** | 项目根 | 项目级规范：工程边界/密钥红线/验证交付；traecli 在 cwd 运行时**自动加载**，是每个编辑任务的隐式上下文 | 用户项目级 AGENTS.md 编写习惯（六段结构），2026-11-08 建 | **现役（自动加载层）** |
 | **memory.md 分类体系** | `.trae/skills/live-monitor/memory.md` | 分类权威定义（7 类触发条件/推送原则/时间节奏/隐私规则）；EDITOR_PROMPT 指示 agent 自行读取 | Trae 技能配置（人写机读），随技能引入、增量维护 | **现役（按需读取层）** |
-| **MONITOR_PROMPT** | `scripts/monitor/legacy-agent/launcher.py:37` | 常驻 agent 盯盘总指令：登录→轮询→推送→收尾全流程委托 | spec FR-2/G5/G9（`.trae/specs/live-monitor-agent/spec.md`），launcher 初版 | 备用（legacy-agent 模式，实测会话不可靠已停用） |
+| **MONITOR_PROMPT** | ~~launcher.py~~（已随 legacy-agent 删除，git 历史可溯） | 常驻 agent 盯盘总指令：登录→轮询→推送→收尾全流程委托 | spec FR-2/G5/G9（`.trae/specs/live-monitor-agent/spec.md`） | 已删除（常驻模式实测不可靠） |
 | **SKILL.md 工作流** | `.trae/skills/live-monitor/SKILL.md` | 全天盯盘工作流八节（登录/提取/轮询/推送/收尾/DOM 速查） | Trae 技能文件，spec 与实盘经验持续沉淀 | 半现役（legacy 模式消费全文；编辑任务模式仅作 agent 可参考的背景知识） |
 | 临时接管 prompt | `tmp/login_full.py` 等 | 一次性人工编排指令（登录接管、补推批次） | 当次处置现场编写 | 临时件（tmp/ 不入库，用完即弃） |
 

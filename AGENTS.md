@@ -5,7 +5,7 @@
 ## 项目定位
 
 - 无人值守盯盘智能体：交易日自动登录和讯财道「复盘哥专栏 VIP直播室」，按交易时段轮询提炼，推送飞书群；独立于 fupan-ge-wiki 知识库仓库运行。
-- 四层结构：`.trae/skills/`（live-monitor 盯盘、hexun-live-login 登录）+ `scripts/monitor/`（core 运行主链 / login 登录恢复 / legacy-agent 常驻备用，详见 docs/脚本功能说明.md）+ `tests/monitor/`（单元测试）+ `runtime/`（运行产物）。
+- 四层结构：`.trae/skills/`（live-monitor 盯盘、hexun-live-login 登录）+ `scripts/monitor/`（core 运行主链 / login 登录恢复，详见 docs/脚本功能说明.md）+ `tests/monitor/`（单元测试）+ `runtime/`（运行产物）。
 - 知识库侧（fupan-ge-wiki）的 hexun-live-collect / distill 消费 `直播课/history/`，与本目录解耦；仅 hexun-live-login 技能在两侧各持一份副本。
 
 ## 工程边界

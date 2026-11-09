@@ -24,7 +24,6 @@ fi
 
 # 2) 按命令行模式杀残留的 traecli exec 盯盘会话（匹配本项目工作目录，避免误伤）
 pkill -f "traecli exec.*live-monitor" 2>/dev/null && log "pkilled traecli exec live-monitor" || true
-pkill -f "watchdog.py.*$PROJECT_ROOT" 2>/dev/null && log "pkilled watchdog" || true
 
 # 3) 杀无头 Chromium（profile 指向本项目目录的）
 pkill -f "chromium.*$RUNTIME_DIR/browser-profile" 2>/dev/null && log "pkilled chromium" || true

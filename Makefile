@@ -6,7 +6,6 @@ export MONITOR_RUNTIME_DIR := $(PROJECT_ROOT)/runtime
 MON := scripts/monitor
 CORE := $(MON)/core
 LOGIN := $(MON)/login
-LEGACY := $(MON)/legacy-agent
 
 .PHONY: help deploy preflight monitor-start monitor-stop \
         auth-input-code captcha-test \
@@ -27,9 +26,6 @@ preflight: ## 手动跑交易日预检
 monitor-start: ## 启动盯盘（轮询+LLM分类推送；生产由 cron 触发）
 	@setsid nohup xvfb-run -a -s "-screen 0 1440x900x24" python3 $(CORE)/monitor_poll.py 60 >/dev/null 2>&1 &
 	@sleep 3; cat $(MONITOR_RUNTIME_DIR)/monitor.pid 2>/dev/null >/dev/null && true; echo "monitor_poll 已后台启动（日志: tmp/poll_out.jsonl）"
-
-monitor-agent-start: ## 【备用】常驻 traecli agent 模式（会话机制待修复）
-	@setsid nohup python3 $(LEGACY)/launcher.py --runtime-dir $(MONITOR_RUNTIME_DIR) >/dev/null 2>&1 &
 
 monitor-stop: ## 手动停止盯盘
 	@bash $(MON)/force_cleanup.sh
