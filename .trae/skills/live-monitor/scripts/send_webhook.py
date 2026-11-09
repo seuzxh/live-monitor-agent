@@ -55,21 +55,38 @@ def read_content() -> str:
     sys.exit(2)
 
 
+CARD_COLORS = [
+    ("🎯", "green"), ("⚠️", "red"), ("📊", "blue"), ("💡", "orange"),
+    ("📰", "grey"), ("📋", "turquoise"), ("🔔", "violet"),
+]
+
+
 def md_to_feishu_post(md: str) -> dict:
-    """Markdown → 飞书 post 富文本：首个 ## 行做标题，其余按行转换。"""
+    """Markdown → 飞书交互卡片：## 行做卡片标题（emoji 映射颜色），正文进 markdown 组件。
+
+    卡片 markdown 组件原生支持 **粗体**、> 引用、- 列表；### 小节标题转粗体行。
+    """
     lines = [l.rstrip() for l in md.strip().splitlines() if l.strip()]
-    title, rows = "", []
+    title, body = "", []
     for l in lines:
         if l.startswith("## ") and not title:
             title = l[3:].strip()
             continue
-        t = l
-        if t.startswith(">"):
-            t = "▍ " + t.lstrip("> ")
-        t = re.sub(r"\*\*(.+?)\*\*", r"\1", t)
-        rows.append([{"tag": "text", "text": t}])
-    return {"msg_type": "post",
-            "content": {"post": {"zh_cn": {"title": title or "盯盘推送", "content": rows}}}}
+        if l.startswith("###"):  # 卡片 markdown 不支持标题层级 → 粗体行
+            body.append("**" + l.lstrip("#").strip() + "**")
+            continue
+        body.append(l)
+    color = "purple"
+    for emoji, tpl in CARD_COLORS:
+        if emoji in (title or ""):
+            color = tpl
+            break
+    title = (title or "盯盘推送").strip("【】")
+    content = "\n".join(body)
+    return {"msg_type": "interactive",
+            "card": {"header": {"template": color,
+                                "title": {"tag": "plain_text", "content": title}},
+                     "elements": [{"tag": "markdown", "content": content}]}}
 
 
 def build_payload(content: str, url: str) -> dict:
