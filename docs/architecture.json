@@ -1,0 +1,354 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "直播监控智能体架构",
+    "locale": "zh-CN",
+    "output": "直播监控架构.html",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1280,
+      520
+    ],
+    "views": [
+      {
+        "id": "main-path",
+        "label": "主链路",
+        "focus": [
+          "cron",
+          "preflight",
+          "poll",
+          "editor",
+          "webhook",
+          "feishu"
+        ],
+        "note": "交易日调度 → 预检 → 轮询 → LLM 分类编辑 → 推送，一条消息的完整处理主干。"
+      },
+      {
+        "id": "collect-login",
+        "label": "采集与登录态",
+        "focus": [
+          "poll",
+          "browser",
+          "hexun",
+          "profile"
+        ],
+        "note": "Xvfb 有头浏览器以持久化 Cookie 访问直播页，登录失效走验证码人机接力恢复。"
+      },
+      {
+        "id": "memory-arch",
+        "label": "记忆与配置",
+        "focus": [
+          "poll",
+          "editor",
+          "webhook",
+          "archives",
+          "memory"
+        ],
+        "note": "系统记忆全部落 runtime 档案（messages/pushes/state），敏感配置在 memory.md，模型会话刻意不用。"
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "cron",
+      "type": "backend",
+      "label": "crontab",
+      "sublabel": "交易日 08:45/08:50/15:20",
+      "pos": [
+        50,
+        70
+      ],
+      "size": [
+        140,
+        56
+      ]
+    },
+    {
+      "id": "preflight",
+      "type": "backend",
+      "label": "preflight.sh",
+      "sublabel": "预检闸门 · 六项检查",
+      "pos": [
+        240,
+        70
+      ],
+      "size": [
+        150,
+        56
+      ]
+    },
+    {
+      "id": "poll",
+      "type": "backend",
+      "label": "monitor_poll.py",
+      "sublabel": "60s 轮询 · 调度中枢",
+      "pos": [
+        440,
+        60
+      ],
+      "size": [
+        170,
+        66
+      ],
+      "tag": "生产主程序"
+    },
+    {
+      "id": "editor",
+      "type": "backend",
+      "label": "LLM 编辑任务",
+      "sublabel": "traecli exec · 七类分类",
+      "pos": [
+        670,
+        60
+      ],
+      "size": [
+        180,
+        66
+      ],
+      "tag": "无状态判断"
+    },
+    {
+      "id": "webhook",
+      "type": "backend",
+      "label": "send_webhook.py",
+      "sublabel": "飞书卡片 · 推送出口",
+      "pos": [
+        900,
+        70
+      ],
+      "size": [
+        170,
+        56
+      ]
+    },
+    {
+      "id": "feishu",
+      "type": "external",
+      "label": "飞书群机器人",
+      "sublabel": "open.feishu.cn",
+      "pos": [
+        1120,
+        70
+      ],
+      "size": [
+        130,
+        56
+      ]
+    },
+    {
+      "id": "hexun",
+      "type": "external",
+      "label": "和讯直播页",
+      "sublabel": "zhibo.homeway.com.cn",
+      "pos": [
+        60,
+        240
+      ],
+      "size": [
+        170,
+        56
+      ]
+    },
+    {
+      "id": "browser",
+      "type": "backend",
+      "label": "Playwright 浏览器",
+      "sublabel": "Xvfb 有头 · 崩溃自愈",
+      "pos": [
+        300,
+        240
+      ],
+      "size": [
+        170,
+        60
+      ]
+    },
+    {
+      "id": "memory",
+      "type": "security",
+      "label": "memory.md",
+      "sublabel": "分类定义 · 手机号 · webhook",
+      "pos": [
+        740,
+        240
+      ],
+      "size": [
+        180,
+        56
+      ],
+      "tag": "600 权限 · 人写机读"
+    },
+    {
+      "id": "profile",
+      "type": "database",
+      "label": "browser-profile",
+      "sublabel": "登录态 Cookie",
+      "pos": [
+        60,
+        390
+      ],
+      "size": [
+        150,
+        56
+      ],
+      "tag": "git 忽略"
+    },
+    {
+      "id": "archives",
+      "type": "database",
+      "label": "runtime 档案",
+      "sublabel": "messages/pushes/state + heartbeat",
+      "pos": [
+        600,
+        380
+      ],
+      "size": [
+        240,
+        66
+      ],
+      "tag": "系统全部记忆"
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "直播智能体 · zxh@GPU 服务器（/home/zxh/projects/14.fupange/直播智能体）",
+      "wraps": [
+        "cron",
+        "preflight",
+        "poll",
+        "editor",
+        "webhook",
+        "profile",
+        "browser",
+        "memory",
+        "archives"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "cron-fire",
+      "from": "cron",
+      "to": "preflight",
+      "label": "08:45 触发",
+      "labelDy": 52
+    },
+    {
+      "id": "pass-gate",
+      "from": "preflight",
+      "to": "poll",
+      "label": "六项通过 · 启动",
+      "labelDy": 52
+    },
+    {
+      "id": "poll-browser",
+      "from": "poll",
+      "to": "browser",
+      "label": "提取消息",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "browser-hexun",
+      "from": "browser",
+      "to": "hexun",
+      "label": "登录态访问"
+    },
+    {
+      "id": "browser-profile",
+      "from": "browser",
+      "to": "profile",
+      "label": "Cookie 读写",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "poll-editor",
+      "from": "poll",
+      "to": "editor",
+      "label": "新消息批 + context",
+      "variant": "emphasis",
+      "labelDy": 57
+    },
+    {
+      "id": "editor-webhook",
+      "from": "editor",
+      "to": "webhook",
+      "label": "Bash 调推送",
+      "variant": "emphasis",
+      "labelDy": 57
+    },
+    {
+      "id": "push-feishu",
+      "from": "webhook",
+      "to": "feishu",
+      "label": "HTTPS 卡片",
+      "labelDy": 52
+    },
+    {
+      "id": "editor-memory",
+      "from": "memory",
+      "to": "editor",
+      "label": "分类定义",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "poll-archives",
+      "from": "poll",
+      "to": "archives",
+      "label": "消息归档 · 游标 · 心跳",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "webhook-archives",
+      "from": "webhook",
+      "to": "archives",
+      "label": "推送全文落盘",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "via": [
+        [
+          985,
+          340
+        ],
+        [
+          720,
+          340
+        ]
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "脚本层管可靠",
+      "items": [
+        "monitor_poll：双去重、崩溃自愈重建、先归档后处理",
+        "preflight 六项闸门；15:20 force_cleanup 兜底回收",
+        "LLM 失败自动降级全文转发，保证内容不漏"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "LLM 层管判断",
+      "items": [
+        "traecli exec 单次任务：七类分类、话题合并、去废话",
+        "每任务全新 session，不依赖会话记忆",
+        "分类定义内嵌 prompt 并引用 memory.md"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "记忆与配置",
+      "items": [
+        "runtime 档案 = 系统全部记忆（按日切割）",
+        "memory.md 敏感配置：600 权限、git 忽略、人写机读",
+        "跨日知识沉淀交 fupan-ge-wiki collect→distill"
+      ]
+    }
+  ]
+}

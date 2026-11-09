@@ -14,3 +14,6 @@ __pycache__/
 
 # ===== 沙箱临时目录 =====
 tmp/
+
+# ===== 架构图 visual-check 证据截图（本地工件，不入库）=====
+docs/*.visual-check.*.png
