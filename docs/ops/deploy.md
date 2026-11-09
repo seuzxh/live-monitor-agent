@@ -45,7 +45,7 @@ make monitor-start
 
 | deploy.sh 拟装的包 | 无 sudo 时实际情况 |
 |---|---|
-| gnome-keyring | **不需要**——PAT 环境变量注入方式不依赖 keyring（本指南第 ③ 步） |
+| gnome-keyring | **已从安装列表移除**——PAT 环境变量注入方式不依赖 keyring（本指南第 ③ 步） |
 | jq / curl / python3 / python3-venv | 多数服务器已有，`which jq curl && python3 -m venv --help` 核对即可 |
 
 其余步骤（traecli 安装脚本、`pip3 install --user playwright`、`playwright install chromium`、ddddocr venv）全部落在 `~` 下，无需 sudo。
