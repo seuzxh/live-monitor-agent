@@ -8,7 +8,7 @@
 
 ```bash
 # ① 获取项目（独立仓库；zxh@GPU 实际部署于 /home/zxh/projects/14.fupange/直播智能体）
-git clone <本仓库远程地址> && cd 直播智能体
+git clone https://github.com/seuzxh/live-monitor-agent.git && cd live-monitor-agent
 
 # ② 一键部署（系统依赖 + traecli + Playwright + ddddocr venv + 目录）
 #    sudo 不可用时见下方「无 sudo 部署差异」

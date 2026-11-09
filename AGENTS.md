@@ -10,7 +10,7 @@
 
 ## 工程边界
 
-- 本目录即项目根（`/home/zxh/projects/14.fupange/直播智能体`），独立 git 仓库。
+- 本目录即项目根（`/home/zxh/projects/14.fupange/直播智能体`），独立 git 仓库，远程 https://github.com/seuzxh/live-monitor-agent（private）。
 - `runtime/` 全部内容（state.json、heartbeat、pushes、snapshots、logs、browser-profile、sms_code.txt）为运行产物，严禁入库。
 - 不改 fupan-ge-wiki 仓库内的 collect/distill 技能与 `直播课/history/` 数据。
 - 外壳脚本保持 Python 标准库；唯一例外 captcha_solver 的 ddddocr，只装在 `scripts/monitor/.venv`（venv 不可搬迁，换目录重建）。
