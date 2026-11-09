@@ -69,7 +69,6 @@ make auth-verify
 
 1. `make status` — 确认 auth_status 与心跳状态
 2. `tail runtime/logs/$(date +%Y%m%d).log` — agent 侧报错
-3. `tail runtime/logs/watchdog.log` — 看门狗动作记录
 4. `cat runtime/auth_history.jsonl` — 失效频率是否异常（频繁失效可能是和讯侧风控加强）
 5. 网络：`curl -I https://zhibo.homeway.com.cn` — 服务器到和讯连通性
 6. traecli：`set -a && . ~/.config/trae-cli/credentials.env && set +a && PATH=$HOME/.local/bin:$PATH traecli models` — 列出模型即认证正常；失败则令牌过期，到 Trae 控制台重置后更新该凭据文件

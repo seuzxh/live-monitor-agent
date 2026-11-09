@@ -15,7 +15,7 @@ git clone https://github.com/seuzxh/live-monitor-agent.git && cd live-monitor-ag
 make deploy
 
 # ③ 配置 traecli 认证（PAT 环境变量注入——无 keyring 服务器唯一可行方式）
-#    注意：trae-cli 0.121.x 公网版没有 login 子命令，不要用 traecli login
+#    注意：安装用 install_v2.sh（2.x）；1.x（0.121.x）与 2.x 命令面差异大，勿混用旧文档
 mkdir -p ~/.config/trae-cli && umask 177
 cat > ~/.config/trae-cli/credentials.env <<'EOF'
 TRAECLI_PERSONAL_ACCESS_TOKEN=<你的 trae-lt- 开头令牌>
@@ -86,7 +86,7 @@ runtime/
 ├── pushes/{日期}.jsonl   # 推送记录（含内容哈希，重启去重）
 ├── snapshots/{日期}.json # 消息快照（供 collect→distill 下游）
 ├── browser-profile/     # Chromium 持久化 profile（Cookie 跨天保留，严禁入库）
-└── logs/                # 按日切割日志 + watchdog.log
+└── logs/                # 按日切割日志
 ```
 
 ## 5. 已知问题与对策

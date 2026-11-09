@@ -9,10 +9,11 @@
 ├── AGENTS.md                  # 项目规范（agent 必读）
 ├── Makefile                   # 全部运维命令入口
 ├── README.md                  # 本文件
-├── scripts/monitor/           # 外壳层（preflight/launcher/watchdog/captcha_solver 等）
+├── scripts/monitor/           # 三组：core（monitor_poll 主程序）/ login（登录恢复）/ 顶层入口
 │   └── .venv/                 # 仅 ddddocr（git 忽略，换目录需重建）
 ├── tests/monitor/             # 单元测试（make test）
-├── docs/ops/                  # 部署指南 + 登录恢复 SOP
+├── docs/                      # 方案/架构对标/脚本说明/prompt 梳理 + ops 运维手册
+│   └── （mkdocs 站点，见 GitHub Pages）
 ├── .trae/
 │   ├── skills/live-monitor/       # 盯盘技能
 │   ├── skills/hexun-live-login/   # 登录技能（与 fupan-ge-wiki 各持一份）
