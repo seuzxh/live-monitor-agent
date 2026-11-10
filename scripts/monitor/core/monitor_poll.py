@@ -152,10 +152,8 @@ def main() -> int:
                     archive_messages(fresh)  # 全量归档（含学员消息，供回溯）
                 if last_total == 0:
                     fresh = []  # 重启首轮纯基线：不推送（防重复），记录 total 起点
-                elif total > last_total:
-                    fresh = [m for m in fresh if m["index"] >= last_total]
-                else:
-                    fresh = []  # 无增量
+                # 增量以内容哈希为准（MQTT 重排后 index 语义失效，曾致 11-10 午后
+                # 45 条老师消息被 index>=last_total 误杀；hash 已跨重启防补发重推）
                 new_msgs = fresh
                 # 登录态检测（失效信号）
                 login_form = page.locator('input[placeholder*="手机"]').count()
