@@ -70,12 +70,20 @@ else
   fail "traecli 不在 PATH（export PATH=\$HOME/.local/bin:\$PATH）"
 fi
 
-# ② 浏览器 user-data-dir（允许首次不存在，仅告警不阻断——首次部署时由 SOP 路径 A 生成）
+# ② 登录态真实检查（2026-11-11 升级：Cookie 文件存在 ≠ 有效，11-11 曾假阴性全天失明）
+#    打开直播页验证；未登录时 FAIL（monitor_poll 无自动登录闭环，启动了也是失明）
+CHECK_LOGIN="python3 $PROJECT_ROOT/scripts/monitor/login/check_login_state.py"
 if [ -d "$PROFILE_DIR" ]; then
-  if [ -f "$PROFILE_DIR/Cookies" ] || ls "$PROFILE_DIR"/Default/Cookies >/dev/null 2>&1; then
-    pass "浏览器 profile 存在且含 Cookie"
+  CHECK_OUT=$(timeout 90 xvfb-run -a $CHECK_LOGIN 2>/dev/null || echo "{}")
+  CHECK_RC=$?
+  LOGGED_IN=$(echo "$CHECK_OUT" | grep -o '"logged_in": *true' | head -1)
+  MSG_TOTAL=$(echo "$CHECK_OUT" | grep -o '"total": *[0-9]*' | grep -o '[0-9]*$')
+  if [ $CHECK_RC -eq 0 ] && [ -n "$LOGGED_IN" ]; then
+    pass "登录态有效（真实页面验证，消息 $MSG_TOTAL 条）"
+  elif [ $CHECK_RC -eq 3 ]; then
+    fail "登录态失效（页面出现登录表单）：请先完成辅助登录再启动监控（docs/ops/login-recovery-sop.md）"
   else
-    log "WARN: $PROFILE_DIR 存在但未见 Cookie 文件（可能未登录过，启动时将走登录流程）"
+    log "WARN: 登录态检查异常（$CHECK_OUT），启动后 monitor_poll 将持续监测并告警"
   fi
 else
   log "WARN: profile 目录不存在（首次部署？），启动时将自动创建: $PROFILE_DIR"

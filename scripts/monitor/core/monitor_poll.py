@@ -91,6 +91,8 @@ def main() -> int:
     last_total = 0
     stall = 0
     err_streak = 0
+    login_fail_streak = 0
+    last_login_alert = 0.0
     import hashlib
     seen = set()  # 已处理消息内容哈希（防 MQTT 补发重复推送；启动时从当日档案恢复）
 
@@ -167,6 +169,27 @@ def main() -> int:
                        "new": new_msgs}
                 out.write(json.dumps(rec, ensure_ascii=False) + "\n")
                 out.flush()
+                # 登录失效告警（缺口修复 2026-11-11：11-11 全天失效零告警）
+                # 连续 5 轮出现登录表单 → 飞书告警一次，30 分钟内不重复
+                if login_form > 0:
+                    login_fail_streak += 1
+                    now_ts = time.time()
+                    if login_fail_streak >= 5 and now_ts - last_login_alert > 1800:
+                        try:
+                            import subprocess
+                            subprocess.run(
+                                ["python3", str(WEBHOOK),
+                                 "## 【⚠️系统告警】直播登录态失效\n\n"
+                                 "> 连续 5 轮检测到登录表单，监控已失明\n\n"
+                                 "### 恢复方式\n"
+                                 "- 回复会话发起辅助登录（验证码人机接力）\n"
+                                 "- 或参考 docs/ops/login-recovery-sop.md"],
+                                capture_output=True, timeout=30)
+                            last_login_alert = now_ts
+                        except Exception:
+                            pass
+                else:
+                    login_fail_streak = 0
                 # 老师新消息 → LLM 分类编辑推送（批量，失败兜底转发）
                 teacher_new = [{"time": rec["ts"], "text": m["text"]}
                                for m in new_msgs
@@ -214,6 +237,17 @@ def main() -> int:
                 else:
                     stall = 0
                 last_total = total
+                # 跨天退出（缺口修复 2026-11-11：收盘后 15:30 主动退出，
+                # 不再僵尸跨日——次日 08:45 由 cron 重新拉起）
+                hm = datetime.now().strftime("%H%M")
+                if "1530" <= hm <= "2359":
+                    out.write(json.dumps({"ts": rec["ts"], "action": "收盘后自动退出"}) + "\n")
+                    out.flush()
+                    try:
+                        ctx.close()
+                    except Exception:
+                        pass
+                    return 0
             except Exception as e:
                 err_streak += 1
                 out.write(json.dumps({"ts": datetime.now().strftime("%H:%M:%S"),
