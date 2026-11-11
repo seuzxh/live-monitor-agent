@@ -58,6 +58,36 @@ def resolve_webhook_url() -> str:
     sys.exit(2)
 
 
+LARK_ENV = Path.home() / ".config/trae-cli/lark.env"
+LARK_CRED = Path.home() / ".trae/lark/credentials.json"
+
+
+def _lark_bot_send(payload: dict) -> dict:
+    """经直播智能体专用 bot 发私聊给 owner（2026-11-11 起支持
+    FUPANGE_LIVE_MONITOR_WEBHOOK=lark-bot 时的通道），返回飞书响应 data。"""
+    import urllib.request
+    kv = dict(l.split("=", 1) for l in LARK_ENV.read_text().splitlines()
+              if "=" in l and not l.strip().startswith("#"))
+    body = json.dumps({"app_id": kv["LARK_APP_ID"].strip(),
+                       "app_secret": kv["LARK_APP_SECRET"].strip()}).encode()
+    req = urllib.request.Request(
+        "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal",
+        data=body, headers={"Content-Type": "application/json"}, method="POST")
+    with urllib.request.urlopen(req, timeout=15) as r:
+        tok = json.loads(r.read())["tenant_access_token"]
+    owner = json.loads(LARK_CRED.read_text())["owner_open_id"]
+    req = urllib.request.Request(
+        "https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type=open_id",
+        data=json.dumps({"receive_id": owner, **payload}).encode(),
+        headers={"Authorization": f"Bearer {tok}",
+                 "Content-Type": "application/json; charset=utf-8"}, method="POST")
+    with urllib.request.urlopen(req, timeout=15) as r:
+        d = json.loads(r.read())
+    if d.get("code") != 0:
+        raise RuntimeError(f"lark bot send: {d.get('code')} {d.get('msg')}")
+    return d.get("data", {})
+
+
 def read_content() -> str:
     args = sys.argv[1:]
     if args and args[0] == "-f":
@@ -151,6 +181,17 @@ def send(content: str, webhook_url: str = None) -> dict:
         sys.stderr.write("ERROR: 推送内容为空\n")
         sys.exit(2)
     url = webhook_url or resolve_webhook_url()
+    if url.strip() == "lark-bot":
+        # 专用 bot 私聊（可引用追问：推送经应用发出，用户引用回复由
+        # traecli channel companion 接收，推送内容自动成为会话上下文）
+        card = md_to_feishu_post(content)
+        card_payload = {"msg_type": "interactive",
+                        "content": json.dumps(card["card"],
+                                              ensure_ascii=False)}
+        data = _lark_bot_send(card_payload)
+        print(f"Status: 200 (lark-bot message_id={data.get('message_id','')[:20]})")
+        archive_push(content)
+        return data
     data = json.dumps(build_payload(content, url), ensure_ascii=False).encode("utf-8")
     req = urllib.request.Request(
         url,
