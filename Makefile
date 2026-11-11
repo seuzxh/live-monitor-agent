@@ -6,10 +6,12 @@ export MONITOR_RUNTIME_DIR := $(PROJECT_ROOT)/runtime
 MON := scripts/monitor
 CORE := $(MON)/core
 LOGIN := $(MON)/login
+LARK := scripts/lark
 
 .PHONY: help deploy preflight monitor-start monitor-stop \
         auth-input-code captcha-test \
         auth-local-login auth-upload auth-verify auth-vnc-start auth-vnc-stop \
+        bot-image-start bot-image-stop bot-image-status \
         status logs test
 
 help: ## 显示全部命令
@@ -63,3 +65,17 @@ auth-vnc-start: ## 【服务器】应急 noVNC 有头续期（临时端口，带
 
 auth-vnc-stop: ## 【服务器】关闭 noVNC
 	@bash $(LOGIN)/auth_vnc.sh stop
+
+# ---------- 飞书 bot 收图管线 ----------
+
+bot-image-start: ## 启动 bot 收图管线（发图→Doubao 识别→引用回复）
+	@if [ -f $(MONITOR_RUNTIME_DIR)/bot_image.pid ] && kill -0 $$(cat $(MONITOR_RUNTIME_DIR)/bot_image.pid) 2>/dev/null; then echo "已在运行 PID $$(cat $(MONITOR_RUNTIME_DIR)/bot_image.pid)"; exit 0; fi
+	@setsid nohup python3 $(LARK)/bot_image_pipeline.py >/dev/null 2>&1 &
+	@sleep 2; cat $(MONITOR_RUNTIME_DIR)/bot_image.pid 2>/dev/null | xargs -I{} echo "bot 收图管线已启动 PID {}"
+
+bot-image-stop: ## 停止 bot 收图管线（按 PID 文件精确终止）
+	@if [ -f $(MONITOR_RUNTIME_DIR)/bot_image.pid ]; then PID=$$(cat $(MONITOR_RUNTIME_DIR)/bot_image.pid); kill $$PID 2>/dev/null && echo "已停止 PID $$PID" || echo "进程不存在"; rm -f $(MONITOR_RUNTIME_DIR)/bot_image.pid; else echo "未在运行"; fi
+
+bot-image-status: ## 查看收图管线状态与最近日志
+	@if [ -f $(MONITOR_RUNTIME_DIR)/bot_image.pid ] && kill -0 $$(cat $(MONITOR_RUNTIME_DIR)/bot_image.pid) 2>/dev/null; then echo "运行中 PID $$(cat $(MONITOR_RUNTIME_DIR)/bot_image.pid)"; else echo "未运行"; fi
+	@tail -5 $(MONITOR_RUNTIME_DIR)/logs/bot_image.log 2>/dev/null || true
