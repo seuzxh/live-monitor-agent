@@ -175,16 +175,15 @@ def main() -> int:
                     login_fail_streak += 1
                     now_ts = time.time()
                     if login_fail_streak >= 5 and now_ts - last_login_alert > 1800:
+                        # 触发自动登录（飞书要码→收码→登录→回执，30 分钟去重防重复触发）
                         try:
                             import subprocess
-                            subprocess.run(
-                                ["python3", str(WEBHOOK),
-                                 "## 【⚠️系统告警】直播登录态失效\n\n"
-                                 "> 连续 5 轮检测到登录表单，监控已失明\n\n"
-                                 "### 恢复方式\n"
-                                 "- 回复会话发起辅助登录（验证码人机接力）\n"
-                                 "- 或参考 docs/ops/login-recovery-sop.md"],
-                                capture_output=True, timeout=30)
+                            subprocess.Popen(
+                                ["xvfb-run", "-a", "python3",
+                                 str(ROOT / "scripts/monitor/login/auto_login.py")],
+                                stdout=(TMP / "auto_login.log").open("a"),
+                                stderr=subprocess.STDOUT,
+                                start_new_session=True)
                             last_login_alert = now_ts
                         except Exception:
                             pass
