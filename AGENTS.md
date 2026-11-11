@@ -16,10 +16,17 @@
 - 不改 fupan-ge-wiki 仓库内的 collect/distill 技能与 `直播课/history/` 数据。
 - 外壳脚本保持 Python 标准库；唯一例外 captcha_solver 的 ddddocr，只装在 `scripts/monitor/.venv`（venv 不可搬迁，换目录重建）。
 
+## 知识库检索（只读）
+
+- 战法知识库在 `../fupan-ge-wiki/wiki/`（约 244 篇 md）：战法/体系类问题优先检索它；当日盘面问题用 `runtime/messages/` 当日档案。
+- 检索规则以 `../fupan-ge-wiki/wiki/_manifest.json` 为准：quality=dense 页可作答案依据，index 类页仅作路由；快速入口 `wiki/index.md`。
+- 只读红线：不改 fupan-ge-wiki 任何文件；回答注明依据页路径。
+
 ## 运行状态与环境
 
 - 运行环境：Python 3.10；Playwright Chromium 在 `~/.cache/ms-playwright`；traecli 在 `~/.local/bin`（机器级，不在项目内）。
 - 调度：crontab 交易日 08:45 preflight、08:50 monitor-start、15:20 monitor-stop，cron 行内注入 PAT 与 PATH。
+- 飞书通道：推送走群 webhook（见密钥节）；交互会话走 traecli lark channel——专用应用凭据 `~/.config/trae-cli/lark.env`（600，机器级），会话配对 `~/.config/trae-cli/lark_chat_id`；验证码回传与 wiki 检索问答经此通道。
 - 运维命令一律收口 Makefile（`make help` 列全部）；查状态 `make status`，看日志 `make logs`。
 
 ## 密钥与账号红线
