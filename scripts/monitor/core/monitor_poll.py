@@ -35,7 +35,10 @@ EXTRACT_JS = """
     if (i >= startIdx) {
       let text = (m.innerText || m.textContent || '').trim();
       text = text.replace(/以上内容仅供参考[\\s\\S]*?风险自担/g, '').trim();
-      result.push({index: i, text: text.substring(0, 1500)});
+      const imgs = Array.from(m.querySelectorAll('img'))
+        .map(x => x.src || '')
+        .filter(s => s.includes('photo') && /\\.(png|jpg|jpeg)/i.test(s));
+      result.push({index: i, text: text.substring(0, 1500), imgs: imgs});
     }
   });
   return JSON.stringify({total: msgs.length, recent: result, url: location.href});
@@ -125,6 +128,52 @@ def main() -> int:
         except Exception:
             pass
 
+    def vision_describe(img_path: Path) -> str:
+        """多模态识别直播配图（Doubao-Seed-2.1-Pro；GLM-5.3 无视觉）。
+        参数顺序必须 prompt 在前、-i 在后（-i 贪婪吞参）；-o 落干净输出。"""
+        import subprocess
+        out = TMP / f"vision_{img_path.stem}.txt"
+        try:
+            subprocess.run(
+                ["traecli", "exec",
+                 "这是直播里发的配图（多为K线/板块表格/盘面截图）。用中文提炼核心信息："
+                 "说明图类型与关键数据点（如连板梯队、涨幅结构、指标状态），80字内。",
+                 "-i", str(img_path),
+                 "-m", "Doubao-Seed-2.1-Pro-0915",
+                 "--permission-mode", "bypass_permissions",
+                 "--skip-git-repo-check", "-o", str(out)],
+                capture_output=True, text=True, timeout=240,
+                cwd=str(ROOT), stdin=subprocess.DEVNULL,
+                env={**os.environ, "PATH": os.path.expanduser("~/.local/bin:") + os.environ.get("PATH", "")})
+            if out.exists() and out.read_text(encoding="utf-8").strip():
+                return out.read_text(encoding="utf-8").strip()[:300]
+        except Exception:
+            pass
+        return ""
+
+    def download_images(msgs: list) -> dict:
+        """下载消息配图到 runtime/images/{日期}/，返回 {消息hash: [本地路径]}。
+        每消息最多 2 张；失败不阻塞主流程。"""
+        import urllib.request
+        img_dir = RUNTIME / "images" / datetime.now().strftime("%Y%m%d")
+        mapping = {}
+        for m in msgs:
+            paths = []
+            for src in m.get("imgs", [])[:2]:
+                h = msg_hash(src)
+                dest = img_dir / f"{m.get('index', 'x')}_{h[:8]}.png"
+                try:
+                    if not dest.exists():
+                        img_dir.mkdir(parents=True, exist_ok=True)
+                        urllib.request.urlretrieve(src, dest)
+                    if dest.exists() and dest.stat().st_size > 2000:
+                        paths.append(dest)
+                except Exception:
+                    continue
+            if paths:
+                mapping[m["text"]] = paths
+        return mapping
+
     with sync_playwright() as p:
         def make_ctx():
             ctx = p.chromium.launch_persistent_context(
@@ -189,11 +238,29 @@ def main() -> int:
                             pass
                 else:
                     login_fail_streak = 0
-                # 老师新消息 → LLM 分类编辑推送（批量，失败兜底转发）
+                # 老师新消息 → 配图识别并入文本 → LLM 分类编辑推送
                 teacher_new = [{"time": rec["ts"], "text": m["text"]}
                                for m in new_msgs
                                if any(m["text"].startswith(t) for t in TEACHERS)]
                 if teacher_new:
+                    # 配图下载 + 多模态识别（每批最多 3 张，超出不识别仅注明）
+                    img_map = download_images(new_msgs)
+                    vision_used = 0
+                    for tm in teacher_new:
+                        paths = img_map.get(tm["text"], [])
+                        if not paths:
+                            continue
+                        notes = []
+                        for ip in paths[:3]:
+                            desc = vision_describe(ip)
+                            notes.append(f"[配图识别] {desc}" if desc
+                                         else f"[配图未识别] {ip.name}")
+                            vision_used += 1
+                        if len(paths) > 3:
+                            notes.append(f"[另有{len(paths)-3}张配图未识别]")
+                        tm["text"] = tm["text"] + "\n" + "\n".join(notes)
+                    if vision_used:
+                        out.write(json.dumps({"ts": rec["ts"], "vision": vision_used}) + "\n")
                     pushes_dir = RUNTIME / "pushes"
                     pushes_dir.mkdir(exist_ok=True)
                     mode = "llm"
