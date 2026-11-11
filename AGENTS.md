@@ -22,6 +22,13 @@
 - 检索规则以 `../fupan-ge-wiki/wiki/_manifest.json` 为准：quality=dense 页可作答案依据，index 类页仅作路由；快速入口 `wiki/index.md`。
 - 只读红线：不改 fupan-ge-wiki 任何文件；回答注明依据页路径。
 
+## 行情数据技能（ifind，观察用）
+
+- `.trae/skills/ifind-data-api` 为符号链接 → 全局技能 `~/.zcode/skills/ifind-data-api`（v1.1.0；换机器需先重装全局技能再建链接）。
+- 用途：飞书会话与终端会话的盘中行情观察（实时快照/历史行情等）；以技能目录为工作目录调用 `scripts/`，流程先读其 SKILL.md。
+- token 在全局技能目录 `config/token_config.json`（600），不进本项目、不进推送；官网重置 refresh_token 后需同步更新该文件。
+- 边界：仅会话内观察用，不进 monitor_poll 自动链路；账号为试用版（配额每周一 00:00 重置），批量取数前先跑 `scripts/get_remaining_quota.py`。
+
 ## 运行状态与环境
 
 - 运行环境：Python 3.10；Playwright Chromium 在 `~/.cache/ms-playwright`；traecli 在 `~/.local/bin`（机器级，不在项目内）。
