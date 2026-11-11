@@ -16,24 +16,15 @@
 - 不改 fupan-ge-wiki 仓库内的 collect/distill 技能与 `直播课/history/` 数据。
 - 外壳脚本保持 Python 标准库；唯一例外 captcha_solver 的 ddddocr，只装在 `scripts/monitor/.venv`（venv 不可搬迁，换目录重建）。
 
-## 知识库检索（只读）
+## 飞书 bot 与跨仓检索（已迁出至工作区根）
 
-- 战法知识库在 `../fupan-ge-wiki/wiki/`（约 244 篇 md）：战法/体系类问题优先检索它；当日盘面问题用 `runtime/messages/` 当日档案。
-- 检索规则以 `../fupan-ge-wiki/wiki/_manifest.json` 为准：quality=dense 页可作答案依据，index 类页仅作路由；快速入口 `wiki/index.md`。
-- 只读红线：不改 fupan-ge-wiki 任何文件；回答注明依据页路径。
-
-## 行情数据技能（ifind，观察用）
-
-- `.trae/skills/ifind-data-api` 为符号链接 → 全局技能 `~/.zcode/skills/ifind-data-api`（v1.1.0；换机器需先重装全局技能再建链接）。
-- 用途：飞书会话与终端会话的盘中行情观察（实时快照/历史行情等）；以技能目录为工作目录调用 `scripts/`，流程先读其 SKILL.md。
-- token 在全局技能目录 `config/token_config.json`（600），不进本项目、不进推送；官网重置 refresh_token 后需同步更新该文件。
-- 边界：仅会话内观察用，不进 monitor_poll 自动链路；账号为试用版（配额每周一 00:00 重置），批量取数前先跑 `scripts/get_remaining_quota.py`。
+- bot 会话工作区自 2026-11-11 迁至工作区根目录 `../`；知识库检索（只读）、ifind 行情技能、飞书 channel 会话指引三节随之移至 `../AGENTS.md`，以该文件为准。
 
 ## 运行状态与环境
 
 - 运行环境：Python 3.10；Playwright Chromium 在 `~/.cache/ms-playwright`；traecli 在 `~/.local/bin`（机器级，不在项目内）。
 - 调度：crontab 交易日 08:45 preflight、08:50 monitor-start、15:20 monitor-stop，cron 行内注入 PAT 与 PATH。
-- 飞书通道：推送走群 webhook（见密钥节）；交互会话走 traecli lark channel——专用应用凭据 `~/.config/trae-cli/lark.env`（600，机器级），会话配对 `~/.config/trae-cli/lark_chat_id`；验证码回传与 wiki 检索问答经此通道。
+- 飞书通道：推送走群 webhook（见密钥节）；交互会话走 traecli lark channel（工作区为 `../`，见工作区根 AGENTS.md）——专用应用凭据 `~/.config/trae-cli/lark.env`（600，机器级），会话配对 `~/.config/trae-cli/lark_chat_id`；验证码回传与 wiki 检索问答经此通道。
 - 运维命令一律收口 Makefile（`make help` 列全部）；查状态 `make status`，看日志 `make logs`。
 
 ## 密钥与账号红线
@@ -48,19 +39,6 @@
 
 - 全部中文产出；术语以 `.trae/specs/live-monitor-agent/spec.md` 与各 SKILL.md 定义为准：盯盘、预检（preflight）、看门狗（watchdog）、辅助登录、Cookie 续期 SOP、无人值守模式。
 - 新术语或改词直接更新本节；本项目不另建术语表文件。
-
-## 飞书 channel 会话指引（2026-11-11 起）
-
-用户在飞书 bot 里的消息经 traecli channel 进入本仓库会话，遵守：
-
-1. **缺上下文先查档案**：用户问题若指向不明（提到「这个机会/刚才那条/继续讲」等），
-   先读 `runtime/pushes/{今天}.jsonl`（当日全部推送成品，含完整 Markdown）与
-   `runtime/messages/{今天}.jsonl`（当日直播原文），按引用内容或最近推送对齐所指，再回答。
-2. **纯 6 位数字消息是登录验证码**：不是提问，不要展开——回复一句
-   「验证码已由登录流程接收」即可，不要把它当作交易指令或代码。
-3. **回答风格**：直接回答，引用对应推送的时间与标题；涉及当日盘面以档案为准，
-   不确定就说明并给出可查证的档案位置。
-4. 回答中不出现主讲人姓名（与推送铁律一致）。
 
 ## 验证与交付
 
