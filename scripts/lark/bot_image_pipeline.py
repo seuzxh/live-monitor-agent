@@ -145,6 +145,20 @@ def vision_describe(img_path: Path) -> str:
     return "识别失败（视觉模型无输出）"
 
 
+def archive_vision(message_id: str, user_text: str, imgs: list[Path],
+                   vision: str) -> None:
+    """识别结果写当日档案 runtime/bot_images/YYYYMMDD.jsonl（对齐 messages/pushes 惯例，供会话查阅）。"""
+    IMG_DIR.mkdir(parents=True, exist_ok=True)
+    day = IMG_DIR / f"{datetime.now().strftime('%Y%m%d')}.jsonl"
+    entry = {"time": datetime.now().strftime("%H:%M:%S"),
+             "message_id": message_id,
+             "user_text": user_text[:200],
+             "images": [p.name for p in imgs],
+             "vision": vision}
+    with day.open("a", encoding="utf-8") as f:
+        f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+
+
 def reply_text(message_id: str, text: str) -> None:
     _api(f"/im/v1/messages/{message_id}/reply", method="POST",
          body={"msg_type": "text",
@@ -171,6 +185,7 @@ def scan_once(state: dict) -> None:
                 if "user.image" not in line or "<lark_message>" not in line:
                     continue
                 mid = re.search(r"<message_id>(om_[^<]+)</message_id>", line)
+                utxt = re.search(r"<content>([^<]*)</content>", line)
                 if not mid:
                     continue
                 message_id = mid.group(1)
@@ -187,6 +202,9 @@ def scan_once(state: dict) -> None:
                     reply_text(message_id,
                                "🖼 图片识别（Doubao）：" +
                                ("\n—\n".join(parts)))
+                    archive_vision(message_id,
+                                   utxt.group(1) if utxt else "",
+                                   imgs, "\n—\n".join(parts))
                     log(f"OK {message_id} imgs={len(imgs)}")
                 except Exception as e:
                     reply_text(message_id, f"🖼 图片识别失败：{e}")

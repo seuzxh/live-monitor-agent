@@ -25,7 +25,7 @@
 - 运行环境：Python 3.10；Playwright Chromium 在 `~/.cache/ms-playwright`；traecli 在 `~/.local/bin`（机器级，不在项目内）。
 - 调度：crontab 交易日 08:45 preflight、08:50 monitor-start、15:20 monitor-stop，cron 行内注入 PAT 与 PATH。
 - 飞书通道：推送走群 webhook（见密钥节）；交互会话走 traecli lark channel（工作区为 `../`，见工作区根 AGENTS.md）——专用应用凭据 `~/.config/trae-cli/lark.env`（600，机器级），会话配对 `~/.config/trae-cli/lark_chat_id`；验证码回传与 wiki 检索问答经此通道。
-- bot 收图管线（2026-11-11 起）：`scripts/lark/bot_image_pipeline.py`——companion 不转译图片且 GLM-5.3 无视觉，故轮询 rollout 发现 user.image 消息 → IM API 下载 → Doubao 识别 → 引用回复；`make bot-image-start/stop/status` 运维，@reboot 自启；图片与状态在 `runtime/bot_images/`、`runtime/bot_image_state.json`。
+- bot 收图管线（2026-11-11 起）：`scripts/lark/bot_image_pipeline.py`——companion 不转译图片且 GLM-5.3 无视觉，故轮询 rollout 发现 user.image 消息 → IM API 下载 → Doubao 识别 → 引用回复＋写当日档案 `runtime/bot_images/YYYYMMDD.jsonl`（供会话查阅）；`make bot-image-start/stop/status` 运维，@reboot 自启；状态在 `runtime/bot_image_state.json`。
 - 运维命令一律收口 Makefile（`make help` 列全部）；查状态 `make status`，看日志 `make logs`。
 
 ## 密钥与账号红线
