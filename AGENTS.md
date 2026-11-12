@@ -26,6 +26,7 @@
 - 调度：crontab 交易日 08:45 preflight、08:50 monitor-start、15:20 monitor-stop，cron 行内注入 PAT 与 PATH。
 - 飞书通道：推送走**盯盘 bot 私聊**（`.env` 的 `FUPANGE_LIVE_MONITOR_WEBHOOK=lark-bot`；填 webhook URL 则回退群机器人）——推送可引用追问，引用内容自动成为会话上下文；交互会话走 traecli lark channel（工作区为 `../`，见工作区根 AGENTS.md）——专用应用凭据 `~/.config/trae-cli/lark.env`（600，机器级），会话配对 `~/.config/trae-cli/lark_chat_id`；验证码回传与 wiki 检索问答经此通道。
 - bot 收图管线（2026-11-11 起）：`scripts/lark/bot_image_pipeline.py`——companion 不转译图片且 GLM-5.3 无视觉，故轮询 rollout 发现 user.image 消息 → IM API 下载 → Doubao 识别 → 引用回复＋写当日档案 `runtime/bot_images/YYYYMMDD.jsonl`（供会话查阅）；`make bot-image-start/stop/status` 运维，@reboot 自启；状态在 `runtime/bot_image_state.json`。
+- **网络与代理（2026-11-12 定论）**：会话网络曾被误判为沙箱禁网，实为本机 mihomo 代理（127.0.0.1:7890，用户级）节点抖动。已三层加固：`~/.trae/traecli.toml` 里 `[shell_environment_policy.set]` 代理变量置空＋`NO_PROXY="*"`（`ignore` 键无效，`set` 键有效）、`[sandbox_workspace_write] network_access=true`；companion/daemon 须在**无代理环境**重启（`restart` 会复用旧 daemon 环境，需先按 PID 清 `traex app-server|lark-runtime` 链再拉起；保活 cron 环境天然干净）；`channel lark disable` 会写 `enabled=false`，恢复须手动改回。
 - 运维命令一律收口 Makefile（`make help` 列全部）；查状态 `make status`，看日志 `make logs`。
 
 ## 密钥与账号红线
