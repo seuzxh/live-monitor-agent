@@ -184,31 +184,38 @@ def scan_once(state: dict) -> None:
             for line in lines:
                 if "user.image" not in line or "<lark_message>" not in line:
                     continue
-                mid = re.search(r"<message_id>(om_[^<]+)</message_id>", line)
-                utxt = re.search(r"<content>([^<]*)</content>", line)
-                if not mid:
-                    continue
-                message_id = mid.group(1)
-                if message_id in state["processed"]:
-                    continue
-                state["processed"].append(message_id)
-                save_state(state)
-                try:
-                    imgs = download_images(message_id)
-                    if not imgs:
-                        reply_text(message_id, "🖼 收到图片，但消息里没解析到图片资源。")
+                # rollout 一行含整段会话历史，须先提取 lark_message 信封，
+                # 再按 message_type 判定，否则纯文本行里的字面量会误中
+                envs = re.findall(r"<lark_message>.*?</lark_message>", line, re.S)
+                for env in envs:
+                    if "<message_type>image</message_type>" not in env \
+                            and "<message_type>post</message_type>" not in env:
                         continue
-                    parts = [vision_describe(p) for p in imgs]
-                    reply_text(message_id,
-                               "🖼 图片识别（Doubao）：" +
-                               ("\n—\n".join(parts)))
-                    archive_vision(message_id,
-                                   utxt.group(1) if utxt else "",
-                                   imgs, "\n—\n".join(parts))
-                    log(f"OK {message_id} imgs={len(imgs)}")
-                except Exception as e:
-                    reply_text(message_id, f"🖼 图片识别失败：{e}")
-                    log(f"FAIL {message_id} {e}")
+                    mid = re.search(r"<message_id>(om_[^<]+)</message_id>", env)
+                    utxt = re.search(r"<content>([^<]*)</content>", env)
+                    if not mid:
+                        continue
+                    message_id = mid.group(1)
+                    if message_id in state["processed"]:
+                        continue
+                    state["processed"].append(message_id)
+                    save_state(state)
+                    try:
+                        imgs = download_images(message_id)
+                        if not imgs:
+                            reply_text(message_id, "🖼 收到图片，但消息里没解析到图片资源。")
+                            continue
+                        parts = [vision_describe(p) for p in imgs]
+                        reply_text(message_id,
+                                   "🖼 图片识别（Doubao）：" +
+                                   ("\n—\n".join(parts)))
+                        archive_vision(message_id,
+                                       utxt.group(1) if utxt else "",
+                                       imgs, "\n—\n".join(parts))
+                        log(f"OK {message_id} imgs={len(imgs)}")
+                    except Exception as e:
+                        reply_text(message_id, f"🖼 图片识别失败：{e}")
+                        log(f"FAIL {message_id} {e}")
 
 
 def main() -> int:
