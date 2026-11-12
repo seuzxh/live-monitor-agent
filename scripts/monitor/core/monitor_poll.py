@@ -165,7 +165,13 @@ def main() -> int:
                 try:
                     if not dest.exists():
                         img_dir.mkdir(parents=True, exist_ok=True)
-                        urllib.request.urlretrieve(src, dest)
+                        # 和讯图床按 UA 反盗链（Python-urllib 被拒 567），需浏览器 UA
+                        req = urllib.request.Request(src, headers={
+                            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                                          "AppleWebKit/537.36 Chrome/126.0 Safari/537.36",
+                            "Referer": "https://zhibo.homeway.com.cn/"})
+                        with urllib.request.urlopen(req, timeout=30) as r, dest.open("wb") as f:
+                            f.write(r.read())
                     if dest.exists() and dest.stat().st_size > 2000:
                         paths.append(dest)
                 except Exception:

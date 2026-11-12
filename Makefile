@@ -69,9 +69,7 @@ auth-vnc-stop: ## 【服务器】关闭 noVNC
 # ---------- 飞书 bot 收图管线 ----------
 
 bot-image-start: ## 启动 bot 收图管线（发图→Doubao 识别→引用回复）
-	@if [ -f $(MONITOR_RUNTIME_DIR)/bot_image.pid ] && kill -0 $$(cat $(MONITOR_RUNTIME_DIR)/bot_image.pid) 2>/dev/null; then echo "已在运行 PID $$(cat $(MONITOR_RUNTIME_DIR)/bot_image.pid)"; exit 0; fi
-	@setsid nohup python3 $(LARK)/bot_image_pipeline.py >/dev/null 2>&1 &
-	@sleep 2; cat $(MONITOR_RUNTIME_DIR)/bot_image.pid 2>/dev/null | xargs -I{} echo "bot 收图管线已启动 PID {}"
+	@if [ -f $(MONITOR_RUNTIME_DIR)/bot_image.pid ] && kill -0 $$(cat $(MONITOR_RUNTIME_DIR)/bot_image.pid) 2>/dev/null; then echo "已在运行 PID $$(cat $(MONITOR_RUNTIME_DIR)/bot_image.pid)"; else setsid nohup python3 $(LARK)/bot_image_pipeline.py >/dev/null 2>&1 & sleep 2; cat $(MONITOR_RUNTIME_DIR)/bot_image.pid 2>/dev/null | xargs -I{} echo "bot 收图管线已启动 PID {}"; fi
 
 bot-image-stop: ## 停止 bot 收图管线（按 PID 文件精确终止）
 	@if [ -f $(MONITOR_RUNTIME_DIR)/bot_image.pid ]; then PID=$$(cat $(MONITOR_RUNTIME_DIR)/bot_image.pid); kill $$PID 2>/dev/null && echo "已停止 PID $$PID" || echo "进程不存在"; rm -f $(MONITOR_RUNTIME_DIR)/bot_image.pid; else echo "未在运行"; fi
