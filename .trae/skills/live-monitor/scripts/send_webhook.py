@@ -129,7 +129,7 @@ def md_to_feishu_post(md: str) -> dict:
         if emoji in (title or ""):
             color = tpl
             break
-    title = (title or "盯盘推送").strip("【】")
+    title = (title or "盯盘推送").replace("【", "").replace("】", " · ")
     content = "\n".join(body)
     return {"msg_type": "interactive",
             "card": {"header": {"template": color,
