@@ -4,6 +4,9 @@
 # 任一不过 → 企微告警并退出码 1，不启动盯盘
 set -u
 
+# 调用方环境不可控（cron/bot 会话/终端），traecli 在 ~/.local/bin，脚本自兜底
+export PATH="$HOME/.local/bin:$PATH"
+
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 RUNTIME_DIR="${MONITOR_RUNTIME_DIR:-$PROJECT_ROOT/runtime}"
 MEMORY_FILE="$PROJECT_ROOT/.trae/skills/live-monitor/memory.md"
