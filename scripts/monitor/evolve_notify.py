@@ -25,21 +25,34 @@ sys.path.insert(0, str(ROOT / "直播智能体/scripts/monitor/login"))
 from lark_notify import send  # noqa: E402
 
 
-def cli(*args: str) -> str:
+CONNECTORS = ("trae", "openclaw")  # trae=fupange 根 agent；openclaw=直播智能体 agent
+
+
+def cli(*args: str, connector: str = "trae") -> str:
+    env = dict(ENV)
+    env["EVOLVE_CONNECTOR"] = connector
     r = subprocess.run(["python3", "-m", "evolve_cli", *args],
                        capture_output=True, text=True, timeout=90,
-                       env=ENV, cwd=str(ROOT))
+                       env=env, cwd=str(ROOT))
     return r.stdout or ""
 
 
 def main() -> int:
-    try:
-        out = cli("proposals")
-    except Exception as e:
-        print(f"proposals 拉取失败: {e}", file=sys.stderr)
-        return 1
-    pending = re.findall(
-        r"(p_[0-9a-f]+)\s+risk=([\d.]+)\s+conf=([\d.]+)\s+\[pending\]\s+(\S[^\n]*)", out)
+    pending = []
+    seen_titles = set()
+    for conn in CONNECTORS:
+        try:
+            out = cli("proposals", connector=conn)
+        except Exception as e:
+            print(f"{conn} proposals 拉取失败: {e}", file=sys.stderr)
+            continue
+        for m in re.finditer(
+                r"(p_[0-9a-f]+)\s+risk=([\d.]+)\s+conf=([\d.]+)\s+\[pending\]\s+(\S[^\n]*)", out):
+            pid, risk, conf, title = m.groups()
+            if pid in seen_titles:  # 跨 agent 重复提案去重
+                continue
+            seen_titles.add(pid)
+            pending.append((pid, risk, conf, title, conn))
     state = json.loads(STATE.read_text()) if STATE.exists() else {"notified": []}
     seen = set(state["notified"])
     new = [p for p in pending if p[0] not in seen]
@@ -48,14 +61,14 @@ def main() -> int:
         return 0
 
     sent = 0
-    for pid, risk, conf, title in new:
+    for pid, risk, conf, title, conn in new:
         try:
-            detail = cli("proposal", pid)
+            detail = cli("proposal", pid, connector=conn)
             m = re.search(r"after: ['\"]?(.+?)(?:\n\npreviews|\npreviews)", detail, re.S)
             after = (m.group(1)[:220] + "…") if m and len(m.group(1)) > 220 else (m.group(1) if m else "")
         except Exception:
             after = ""
-        text = (f"📋 进化提案待决策 {pid}\n"
+        text = (f"📋 进化提案待决策 {pid}（{conn}）\n"
                 f"主题：{title}\n风险 {risk} · 置信 {conf}\n"
                 + (f"变更要点：{after}\n" if after else "")
                 + f"\n回复「apply {pid}」应用；不回复视为放弃")

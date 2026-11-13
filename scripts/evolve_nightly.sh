@@ -82,8 +82,30 @@ out.write(json.dumps({'type':'assistant','message':{'role':'assistant','content'
 out.close()
 PYEOF
 
-# 3) evolve import（evolve CLI 自己按 mtime 取最新，limit 10 上限）
+# 3) 双 agent 导入（2026-11-13 起：本机三个连接器需显式消歧）
+#    trae → fupange 根 agent（bot 路由大脑，evidence=当日全部会话）
+#    openclaw → 直播智能体 agent（evidence=编辑任务会话 + 直播档案 + 推送成品）
 source ~/.evolve-skill.env
 cd "$ROOT"
+
+# 3a) 根 agent（trae）：除编辑任务外的全部会话
+export EVOLVE_CONNECTOR=trae
 export EVOLVE_RUNTIME_ROOT="$ROOT"
+mkdir -p "$OUT/editor"
+for f in "$OUT"/*.jsonl; do
+    base=$(basename "$f")
+    [ "$base" = "${TODAY}_live_archive.jsonl" ] && continue
+    [ "$base" = "${TODAY}_pushes.jsonl" ] && continue
+    if grep -q "直播盯盘推送编辑" "$f" 2>/dev/null; then
+        mv "$f" "$OUT/editor/$base"
+    fi
+done
+cp "$OUT/${TODAY}_live_archive.jsonl" "$OUT/editor/" 2>/dev/null || true
+cp "$OUT/${TODAY}_pushes.jsonl" "$OUT/editor/" 2>/dev/null || true
 python3 -m evolve_cli import --from "$OUT" --limit 10 --no-wait 2>&1 | tee -a "$ROOT/直播智能体/runtime/logs/evolve_nightly.log"
+
+# 3b) 直播智能体 agent（openclaw）：编辑任务会话 + 直播档案 + 推送成品
+export EVOLVE_CONNECTOR=openclaw
+export EVOLVE_RUNTIME_ROOT="$ROOT/直播智能体"
+mkdir -p "$OUT/editor"
+[ -d "$OUT/editor" ] && python3 -m evolve_cli import --from "$OUT/editor" --limit 10 --no-wait 2>&1 | tee -a "$ROOT/直播智能体/runtime/logs/evolve_nightly.log"
