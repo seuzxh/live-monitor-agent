@@ -1,0 +1,30 @@
+{
+  "_comment": "Machine-readable contract the runtime manifests must honor. Mirrors cli/src/evolve_cli/main.py (the CLI ships in the cli/ sibling of this shared/ folder). tests/test_skill_docs.py validates SKILL.md and SKILL.toml against this, so drift between the playbook and a manifest fails CI.",
+  "cli_commands": ["init", "status", "import", "proposals", "proposal", "capability", "apply"],
+  "bogus_commands": ["reviews", "approve", "rollback", "connect"],
+  "writes_runtime": ["apply"],
+  "writes_cloud": ["init", "import", "capability"],
+  "read_only": ["status", "proposals", "proposal", "capability"],
+  "confirm_before": ["init", "import", "apply", "capability_auto_apply_true"],
+  "apply_is_two_step": true,
+  "no_rollback_command": true,
+  "rollback_is_manual": "delete the `<!-- evolvor:chg_... -->` chunk; replace-ops are NOT wrapped in a chunk",
+  "connectors": {
+    "claude_code": {
+      "default_runtime_root": "the project directory (where CLAUDE.md lives)",
+      "surfaces": ["CLAUDE.md", "CLAUDE.local.md", "~/.claude/CLAUDE.md"]
+    },
+    "openclaw": {
+      "default_runtime_root": "~/.openclaw/workspace",
+      "surfaces": ["AGENTS.md", "SOUL.md", "IDENTITY.md", "USER.md", "TOOLS.md", "BOOTSTRAP.md", "HEARTBEAT.md", "MEMORY.md", "skills/"]
+    }
+  },
+  "openclaw_tools": {
+    "read_only": ["status", "proposals", "proposal_preview", "capability_list", "apply_dry_run"],
+    "mutating": ["init", "import", "capability_set_auto_apply", "apply"]
+  },
+  "required_phrases": {
+    "apply_warns_no_rollback": "no rollback",
+    "import_warns_leaves_machine": "leave the machine"
+  }
+}
