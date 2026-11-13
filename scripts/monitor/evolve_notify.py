@@ -20,6 +20,13 @@ STATE = ROOT / "直播智能体/runtime/evolve_notified.json"
 ENV = {**os.environ,
        "EVOLVE_CONNECTOR": "trae",
        "PATH": os.path.expanduser("~/.local/bin:") + os.environ.get("PATH", "")}
+# 云端认证需要 EVOLVE_API_KEY 在环境变量（连接器配置文件仅部分命令读取）
+_skill_env = Path.home() / ".evolve-skill.env"
+if _skill_env.exists():
+    for _line in _skill_env.read_text().splitlines():
+        if "=" in _line and not _line.strip().startswith("#"):
+            _k, _v = _line.split("=", 1)
+            ENV.setdefault(_k.strip(), _v.strip())
 
 sys.path.insert(0, str(ROOT / "直播智能体/scripts/monitor/login"))
 from lark_notify import send  # noqa: E402
