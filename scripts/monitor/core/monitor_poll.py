@@ -78,11 +78,30 @@ def llm_edit_and_push(new_teacher_msgs: list) -> bool:
          "--skip-git-repo-check"],
         capture_output=True, text=True, timeout=300, cwd=str(ROOT), env=env,
         stdin=subprocess.DEVNULL)
-    ok = r.returncode == 0 and re.search(r"[\"']pushed[\"']", r.stdout or "")
+    m = re.search(r"[\"']pushed[\"'][:\s]+(\d+)", r.stdout or "")
+    pushed = int(m.group(1)) if m else -1
     (TMP / "editor_last.log").write_text(
-        f"rc={r.returncode}\n{r.stdout[-600:] if r.stdout else ''}\n{r.stderr[-300:] if r.stderr else ''}",
+        f"rc={r.returncode} pushed={pushed}\n{r.stdout[-600:] if r.stdout else ''}\n{r.stderr[-300:] if r.stderr else ''}",
         encoding="utf-8")
-    return ok
+    # 伪造防护（evolve 8 提案根源故障）：agent 可能未执行工具就编造
+    # {"pushed": N}——真推送必然在 pushes 档案留下 content 记录，由调用方
+    # 对比任务前后的档案增量核验，此处仅返回声称值
+    return r.returncode == 0 and pushed >= 0, pushed
+
+
+def count_push_records() -> int:
+    """当日 pushes 档案中的真实推送记录数（仅 archive_push 写入的 content 记录）。"""
+    p = RUNTIME / "pushes" / f"{datetime.now().strftime('%Y%m%d')}.jsonl"
+    if not p.exists():
+        return 0
+    n = 0
+    for line in p.read_text(encoding="utf-8").splitlines():
+        try:
+            if "content" in json.loads(line):
+                n += 1
+        except Exception:
+            continue
+    return n
 
 
 def main() -> int:
@@ -269,13 +288,26 @@ def main() -> int:
                         out.write(json.dumps({"ts": rec["ts"], "vision": vision_used}) + "\n")
                     pushes_dir = RUNTIME / "pushes"
                     pushes_dir.mkdir(exist_ok=True)
+                    # 成败以 pushes 档案增量核验（archive_push 仅在真实发送成功后
+                    # 落盘）——agent 编造 {"pushed": N} 而未执行工具时增量必为 0，
+                    # 判定失败走重试/留待补推（evolve 8 提案根源故障的代码级防线）
+                    before_n = count_push_records()
+                    claimed = -1
                     mode = "llm"
                     try:
-                        if not llm_edit_and_push(teacher_new):
-                            mode = "llm-retry" if llm_edit_and_push(teacher_new) else "llm-failed"
+                        ok, claimed = llm_edit_and_push(teacher_new)
+                        if not ok:
+                            ok, claimed = llm_edit_and_push(teacher_new)
+                            mode = "llm-retry" if ok else "llm-failed"
                     except Exception as e:
                         out.write(json.dumps({"ts": rec["ts"], "llm_err": str(e)[:80]}) + "\n")
                         mode = "llm-failed"
+                    after_n = count_push_records()
+                    if mode != "llm-failed" and after_n - before_n != claimed:
+                        mode = "llm-failed"
+                        out.write(json.dumps({"ts": rec["ts"],
+                                               "fabricated": claimed,
+                                               "actual": after_n - before_n}) + "\n")
                     if mode == "llm-failed":
                         # 消息已在 messages 档案不丢失；不降级转发（用户裁定），
                         # 留待盘后人工补推（backfill 流程）
